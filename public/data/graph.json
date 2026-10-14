@@ -1,0 +1,53 @@
+{
+  "nodes": [
+    {
+      "id": "Finance",
+      "title": "Finance",
+      "type": "area",
+      "tags": [
+        "finance",
+        "area"
+      ],
+      "body": "# Finance\n\nEverything I'm learning about finance and investing.\n\n## Concepts\n- [[Beta]]\n- [[Market Risk Premium]] — not the same as market expected return!",
+      "degree": 2
+    },
+    {
+      "id": "Beta",
+      "title": "Beta",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "investing",
+        "risk"
+      ],
+      "body": "# Beta\n\n**In one sentence:** Beta measures how much a stock moves compared to the overall market.\n\n## Notes\n- Learned how to calculate it on .\n\n> [!info] Added by Claude\n> **Formula**\n> $$\\beta = \\frac{\\text{Cov}(R_i, R_m)}{\\text{Var}(R_m)}$$\n> - $R_i$ = the stock's returns, $R_m$ = the market's returns (usually the S&P 500)\n> - Same thing as the **slope** when you regress the stock's returns on the market's returns\n>\n> **How to read it**\n> | Beta | Meaning |\n> |---|---|\n> | β = 1 | Moves with the market |\n> | β > 1 | More volatile than the market (e.g. 1.5 → ~15% move when market moves 10%) |\n> | 0 < β < 1 | Less volatile than the market |\n> | β < 0 | Tends to move opposite to the market |\n>\n> **In Excel/Sheets:** `=SLOPE(stock_returns, market_returns)` or `=COVARIANCE.S(stock, market)/VAR.S(market)`\n>\n> Beta only captures (market-wide risk), not risk specific to one company. It's the key input to the .\n\n## Related\n- [[Finance]]\n- [[Market Risk Premium]]\n\n## Sources",
+      "degree": 2
+    },
+    {
+      "id": "Market Risk Premium",
+      "title": "Market Risk Premium",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "investing",
+        "risk"
+      ],
+      "body": "# Market Risk Premium\n\n**In one sentence:** Market Risk Premium is NOT the same thing as market expected return.\n\n## Notes\n- Easy to mix these up. ⚠️\n\n> [!info] Added by Claude\n> **Market Risk Premium (MRP) = Expected market return − Risk-free rate**\n> $$MRP = E(R_m) - R_f$$\n> - **Market expected return** $E(R_m)$ = the *total* return you expect from the market (e.g. 10%)\n> - **Market risk premium** = only the *extra* return on top of the risk-free rate, as a reward for taking risk (e.g. 10% − 4% = 6%)\n>\n> **Why it matters:** In the , you multiply [[Beta]] by the **premium**, not the total return:\n> $$E(R_i) = R_f + \\beta \\times (E(R_m) - R_f)$$\n> Common mistake: using $E(R_m)$ where the formula needs $E(R_m) - R_f$. That double-counts the risk-free rate.\n>\n> **Watch the wording in problems:** \"the market's expected return is 10%\" → subtract $R_f$ yourself. \"The market risk premium is 6%\" → plug it in directly.\n\n## Related\n- [[Finance]]\n- [[Beta]]\n\n## Sources",
+      "degree": 2
+    }
+  ],
+  "links": [
+    {
+      "source": "Finance",
+      "target": "Beta"
+    },
+    {
+      "source": "Finance",
+      "target": "Market Risk Premium"
+    },
+    {
+      "source": "Beta",
+      "target": "Market Risk Premium"
+    }
+  ]
+}
