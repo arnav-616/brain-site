@@ -1,18 +1,81 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
-html, body, #root { height: 100%; margin: 0; background: #05060a; color: #e2e8f0; overflow: hidden; }
-body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded", "Manrope", sans-serif;
+  --color-ink: #E6E9FF;
+  --color-mute: #8A90B8;
+}
 
-.note h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 .75rem; }
-.note h2 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 .5rem; color: #f1f5f9; }
-.note p, .note li { line-height: 1.65; color: #cbd5e1; }
+html, body, #root { height: 100%; margin: 0; overflow: hidden; }
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: #070818;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid #5EEAD4; outline-offset: 2px; border-radius: 6px; }
+
+/* Glass: the one surface style used by every floating layer. */
+.glass {
+  background: rgba(16, 18, 46, 0.58);
+  border: 1px solid rgba(160, 170, 255, 0.14);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.btn-icon { color: var(--color-mute); font-size: 1.5rem; line-height: 1; padding: 0 .4rem; }
+.btn-icon:hover { color: var(--color-ink); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border-radius: 999px; padding: .3rem .8rem; font-size: .8rem;
+  color: var(--color-mute);
+  background: rgba(16, 18, 46, 0.55);
+  border: 1px solid rgba(160, 170, 255, 0.12);
+  backdrop-filter: blur(12px);
+  transition: color .2s, border-color .2s, background .2s;
+}
+.chip:hover { color: var(--color-ink); }
+.chip-on { color: var(--color-ink); border-color: color-mix(in srgb, var(--c) 60%, transparent); background: color-mix(in srgb, var(--c) 14%, rgba(16,18,46,.6)); }
+
+.timeline { -webkit-appearance: none; appearance: none; background: transparent; height: 20px; cursor: pointer; }
+.timeline::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, #5EEAD4, #A78BFA); border-radius: 2px; opacity: .6; }
+.timeline::-moz-range-track { height: 2px; background: linear-gradient(90deg, #5EEAD4, #A78BFA); opacity: .6; }
+.timeline::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -6px; border-radius: 50%; background: #E6E9FF; box-shadow: 0 0 12px #5EEAD4; }
+.timeline::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: #E6E9FF; box-shadow: 0 0 12px #5EEAD4; }
+
+.node-label { padding: 4px 10px; background: rgba(16,18,46,.85); border: 1px solid rgba(160,170,255,.2); border-radius: 999px; font: 500 13px Manrope, system-ui; color: #E6E9FF; }
+
+/* The single orchestrated moment: the title settles in as the brain wakes up. */
+.hero-enter { animation: hero 1.4s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes hero { from { opacity: 0; filter: blur(8px); transform: translateY(6px); } }
+.panel-enter { animation: panel .35s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes panel { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) { .hero-enter, .panel-enter { animation: none; } }
+
+/* Note body */
+.note { font-size: 15px; }
+.note h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 .75rem; }
+.note h2 { font-size: 1.05rem; font-weight: 650; margin: 1.6rem 0 .5rem; color: #fff; }
+.note h3 { font-size: .95rem; font-weight: 650; margin: 1.2rem 0 .4rem; color: #fff; }
+.note p, .note li { line-height: 1.7; color: #c9cdf0; }
 .note p { margin: .6rem 0; }
 .note ul { list-style: disc; padding-left: 1.25rem; margin: .5rem 0; }
-.note strong { color: #f8fafc; }
-.note code { background: #1e293b; padding: .1rem .35rem; border-radius: .25rem; font-size: .85em; }
-.note blockquote { border-left: 3px solid #a78bfa; background: #a78bfa14; padding: .5rem 1rem; margin: 1rem 0; border-radius: 0 .5rem .5rem 0; }
-.note table { border-collapse: collapse; margin: .75rem 0; font-size: .9rem; }
-.note th, .note td { border: 1px solid #334155; padding: .35rem .6rem; text-align: left; }
+.note ol { list-style: decimal; padding-left: 1.25rem; margin: .5rem 0; }
+.note li::marker { color: #5c628f; }
+.note strong { color: #fff; }
+.note code { background: rgba(160,170,255,.12); padding: .1rem .35rem; border-radius: .3rem; font-size: .85em; }
+.note blockquote { border-left: 2px solid #A78BFA; background: rgba(167,139,250,.07); padding: .5rem 1rem; margin: 1rem 0; border-radius: 0 .75rem .75rem 0; }
+.note table { border-collapse: collapse; margin: .75rem 0; font-size: .875rem; }
+.note th, .note td { border: 1px solid rgba(160,170,255,.16); padding: .4rem .65rem; text-align: left; }
 .note .katex-display { overflow-x: auto; overflow-y: hidden; padding: .25rem 0; }
-.note a { color: #c4b5fd; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.note a { color: #5EEAD4; text-decoration: underline; text-decoration-color: rgba(94,234,212,.35); text-underline-offset: 3px; cursor: pointer; }
+.note a:hover { text-decoration-color: #5EEAD4; }
+.note input[type="checkbox"] { accent-color: #5EEAD4; margin-right: .4rem; }
+.note .contains-task-list { list-style: none; padding-left: .25rem; }
+
+/* Briefing: tighter, sections read as a scannable list */
+.briefing .note h2 { font-size: .95rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid rgba(160,170,255,.1); }
+.briefing .note h2:first-of-type { border-top: 0; padding-top: 0; margin-top: .5rem; }

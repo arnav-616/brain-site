@@ -76,10 +76,38 @@ describe('toPublic', () => {
 })
 
 describe('findLeaks', () => {
+  it('does not mistake a created date for a private daily-note title', () => {
+    const g = { nodes: [{ id: 'Beta', title: 'Beta', body: 'ok', created: '2026-10-13' }], links: [], generatedAt: '2026-10-13T00:00:00Z' }
+    expect(findLeaks(g, notes)).toEqual([])
+  })
+  it('still catches a daily-note title in the text', () => {
+    const g = { nodes: [{ id: 'Beta', title: 'Beta', body: 'see 2026-10-13', created: '2026-10-13' }], links: [] }
+    expect(findLeaks(g, notes).join(' ')).toMatch(/2026-10-13/)
+  })
   it('catches a private title or text that slipped into public data', () => {
     const bad = { nodes: [{ id: 'X', title: 'X', body: 'about Google Internship: Interview with recruiter Jane on Friday' }], links: [] }
     const leaks = findLeaks(bad, notes)
     expect(leaks.length).toBeGreaterThan(0)
     expect(leaks.join(' ')).toMatch(/Google Internship/)
+  })
+})
+
+describe('dates and topics', () => {
+  it('reads created as a YYYY-MM-DD string, even when YAML parses it as a date', () => {
+    expect(parseNote('a.md', note('created: 2026-10-13', 'x')).created).toBe('2026-10-13')
+    expect(parseNote('a.md', note("created: '2026-10-14'", 'x')).created).toBe('2026-10-14')
+    expect(parseNote('a.md', 'no frontmatter').created).toBeNull()
+  })
+  it('gives each node a topic from its first meaningful tag', () => {
+    const g = buildGraph([
+      parseNote('a.md', note('tags: [daily, finance, risk]', 'x')),
+      parseNote('b.md', note('tags: [dashboard]', 'x')),
+    ])
+    expect(g.nodes.find(n => n.id === 'a').topic).toBe('finance')
+    expect(g.nodes.find(n => n.id === 'b').topic).toBeNull()
+  })
+  it('carries created into graph nodes', () => {
+    const g = buildGraph([parseNote('a.md', note('created: 2026-10-13', 'x'))])
+    expect(g.nodes[0].created).toBe('2026-10-13')
   })
 })

@@ -27,13 +27,16 @@ function walk(dir) {
 
 const notes = walk(vault).map(f => parseNote(relative(vault, f), readFileSync(f, 'utf8')))
 notes.filter(n => n.warning).forEach(n => console.warn(`⚠️  ${n.warning}`))
+// Today.md (the morning briefing) is shown in its own panel, not as a node — and only privately.
+const briefing = notes.find(n => n.path === 'Today.md')
+const graphNotes = notes.filter(n => n !== briefing)
 
 let graph, out
 if (mode === 'private') {
-  graph = buildGraph(notes)
+  graph = { ...buildGraph(graphNotes), briefing: briefing ? { created: briefing.created, body: briefing.body } : null }
   out = join(root, '.private/graph.json')
 } else if (mode === 'public') {
-  graph = toPublic(notes)
+  graph = toPublic(graphNotes)
   const leaks = findLeaks(graph, notes)
   if (leaks.length) {
     console.error('❌ Refusing to export — private content found in public data:')
@@ -46,6 +49,7 @@ if (mode === 'private') {
   process.exit(1)
 }
 
+graph.generatedAt = new Date().toISOString()
 mkdirSync(dirname(out), { recursive: true })
 writeFileSync(out, JSON.stringify(graph, null, 2))
 const priv = notes.length - graph.nodes.length

@@ -1,7 +1,13 @@
 # Arnav's Brain
 
 A 3D, explorable map of my second brain — an Obsidian vault maintained with Claude.
-Each glowing node is a note; lines are links between them. Click a node to read it.
+Each glowing node is a note, colored by topic; lines are links between them, and pulses of light
+run along them like synapses firing. Click a node to fly to it and read it. **Watch it grow** replays
+the brain in the order notes were written.
+
+Every morning a scheduled Claude agent runs `/ingest` in the vault: it reads my professional email,
+chosen Drive folders, my GitHub repos and links I've saved, files them into linked notes, writes a
+private morning briefing, and republishes this site (only `visibility: public` notes).
 
 Built with React, Vite, Tailwind and [react-force-graph-3d](https://github.com/vasturiano/react-force-graph).
 
@@ -9,7 +15,7 @@ Built with React, Vite, Tailwind and [react-force-graph-3d](https://github.com/v
 
 | Command | What it does |
 |---|---|
-| `npm run dev:private` | My **full** brain, on my laptop only (includes private notes) |
+| `npm run dev:private` | My **full** brain plus today's briefing, on my laptop only (includes private notes) |
 | `npm run export:public` | Rebuild the public data from the vault (only `visibility: public` notes) |
 | `npm run dev` | Preview the public version locally |
 | `npm test` | Run the export + privacy tests |

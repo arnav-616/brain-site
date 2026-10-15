@@ -25,3 +25,4 @@ dist-ssr
 
 # Full private brain — never commit
 .private/
+.vercel
