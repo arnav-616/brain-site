@@ -40,6 +40,47 @@ function starfield() {
 
 const endId = (end) => end.id ?? end
 
+// Soft floating label for a topic region, drawn once to a canvas.
+function textSprite(text, color) {
+  const c = document.createElement('canvas')
+  const ctx = c.getContext('2d')
+  const font = '600 64px Unbounded, Manrope, sans-serif'
+  ctx.font = font
+  c.width = Math.ceil(ctx.measureText(text).width) + 40
+  c.height = 96
+  ctx.font = font
+  ctx.fillStyle = color
+  ctx.textBaseline = 'middle'
+  ctx.fillText(text, 20, 48)
+  // Constant on-screen size, so labels stay readable far away and don't swamp the view up close.
+  const sprite = new Sprite(new SpriteMaterial({ map: new CanvasTexture(c), transparent: true, opacity: 0.5, depthWrite: false, sizeAttenuation: false }))
+  const h = 0.045
+  sprite.scale.set(h * c.width / c.height, h, 1)
+  return sprite
+}
+
+// Pulls notes that share a topic toward each other, so topics form visible regions.
+function clusterForce() {
+  let nodes = []
+  const force = (alpha) => {
+    const sum = {}
+    for (const n of nodes) {
+      if (!n.topic) continue
+      const s = (sum[n.topic] ??= { x: 0, y: 0, z: 0, k: 0 })
+      s.x += n.x; s.y += n.y; s.z += n.z; s.k++
+    }
+    for (const n of nodes) {
+      const s = n.topic && sum[n.topic]
+      if (!s || s.k < 2) continue
+      n.vx += (s.x / s.k - n.x) * alpha * 0.12
+      n.vy += (s.y / s.k - n.y) * alpha * 0.12
+      n.vz += (s.z / s.k - n.z) * alpha * 0.12
+    }
+  }
+  force.initialize = (n) => { nodes = n }
+  return force
+}
+
 export default function Brain({ data, topics, selectedId, highlightIds, onSelect }) {
   const fg = useRef()
   const fitted = useRef(false)
@@ -56,13 +97,14 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
   useEffect(() => {
     const g = fg.current
     if (!g) return
-    const bloom = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 0.75, 0.5, 0.15)
+    const bloom = new UnrealBloomPass(new Vector2(window.innerWidth, window.innerHeight), 0.6, 0.45, 0.2)
     g.postProcessingComposer().addPass(bloom)
     const stars = starfield()
     g.scene().add(stars)
     // Spread notes out, and start close enough that a small brain still fills the view.
     g.d3Force('charge').strength(-110)
     g.d3Force('link').distance(42)
+    g.d3Force('cluster', clusterForce())
     g.cameraPosition({ x: 0, y: 0, z: 200 + 50 * Math.sqrt(data.nodes.length) })
     const controls = g.controls()
     controls.autoRotate = !reducedMotion
@@ -77,6 +119,33 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- scene setup runs once
   }, [])
+
+  // Topic labels float above the middle of each topic's region.
+  const labels = useRef(new Map())
+  useEffect(() => {
+    const scene = fg.current.scene()
+    for (const [t, color] of topics) {
+      const sprite = textSprite(t, color)
+      sprite.visible = false
+      labels.current.set(t, sprite)
+      scene.add(sprite)
+    }
+    const current = labels.current
+    return () => { for (const sprite of current.values()) scene.remove(sprite); current.clear() }
+  }, [topics])
+  const placeLabels = () => {
+    const sum = {}
+    for (const n of data.nodes) {
+      if (!n.topic || n.x === undefined) continue
+      const s = (sum[n.topic] ??= { x: 0, y: 0, z: 0, top: -Infinity, k: 0 })
+      s.x += n.x; s.y += n.y; s.z += n.z; s.k++; s.top = Math.max(s.top, n.y)
+    }
+    for (const [t, sprite] of labels.current) {
+      const s = sum[t]
+      sprite.visible = !!s
+      if (s) sprite.position.set(s.x / s.k, s.top + 22, s.z / s.k)
+    }
+  }
 
   // Synapses: every so often a pulse of light runs along a random connection.
   useEffect(() => {
@@ -104,7 +173,7 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
     const node = data.nodes.find(n => n.id === selectedId)
     if (!node || node.x === undefined) return
     fg.current.controls().autoRotate = false
-    const dist = 140
+    const dist = 230
     const r = 1 + dist / Math.hypot(node.x, node.y, node.z || 1)
     fg.current.cameraPosition({ x: node.x * r, y: node.y * r, z: node.z * r }, node, reducedMotion ? 0 : 1400)
   }, [selectedId, data])
@@ -151,7 +220,9 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
       onBackgroundClick={() => onSelect(null)}
       showNavInfo={false}
       cooldownTicks={150}
+      onEngineTick={placeLabels}
       onEngineStop={() => {
+        placeLabels()
         // Frame the whole brain once, after the layout first settles.
         if (!fitted.current) { fitted.current = true; fg.current.zoomToFit(900, 140) }
       }}

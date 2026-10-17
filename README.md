@@ -11,6 +11,25 @@ private morning briefing, and republishes this site (only `visibility: public` n
 
 Built with React, Vite, Tailwind and [react-force-graph-3d](https://github.com/vasturiano/react-force-graph).
 
+## What's in it
+
+**Public site** (what visitors see)
+- 3D map with bloom, topic regions with floating labels, and synapse pulses along links
+- **Take the tour**: a 60-second guided flight through the highlights
+- **About me and my projects**: project cards (summary, stack, live link, code) and skills ranked by depth
+- Shareable links: `/#/note/CAPM` opens that note directly
+- Timeline replay, topic filters, ⌘K search, a list view when 3D isn't available
+
+**Private dashboard** (`npm run dev:private`, laptop only)
+- **Command bar**: Enter saves a thought or link to the inbox; ⌘Enter asks the brain a question
+- **Hub**: Today (briefing with clickable tasks + deadlines in the next 2 weeks), Review (3 daily
+  flashcards + notes worth another look), Health (unwritten links, orphans, thin notes),
+  Privacy (what's public, one-click flip), Runs (ingest history)
+- One-click **Refresh briefing**, **Tidy inbox**, and **Undo last change** (every change is a git commit)
+
+The dashboard runs Claude Code locally through a small dev-server API (`lib/local-api.js`). It only
+accepts requests from this page, can draft but never send email, and is never part of the public build.
+
 ## Commands
 
 | Command | What it does |
@@ -18,7 +37,7 @@ Built with React, Vite, Tailwind and [react-force-graph-3d](https://github.com/v
 | `npm run dev:private` | My **full** brain plus today's briefing, on my laptop only (includes private notes) |
 | `npm run export:public` | Rebuild the public data from the vault (only `visibility: public` notes) |
 | `npm run dev` | Preview the public version locally |
-| `npm test` | Run the export + privacy tests |
+| `npm test` | Run the export, privacy, dashboard and showcase tests |
 
 The vault path defaults to `../second_project` (override with `VAULT_PATH=...`).
 

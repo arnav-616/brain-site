@@ -1,0 +1,21 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      # The published data must only ever contain public notes.
+      - name: Check published data is public-only
+        run: |
+          node -e "
+            const g = require('./public/data/graph.json');
+            const bad = g.nodes.filter(n => ['daily','inbox'].includes(n.type) || n.path || n.visibility || g.briefing || g.deadlines);
+            if (bad.length || g.briefing || g.deadlines) { console.error('Private fields in public data', bad.map(n => n.id)); process.exit(1) }
+            console.log('OK:', g.nodes.length, 'public notes')"

@@ -55,6 +55,20 @@ body {
 @keyframes panel { from { opacity: 0; transform: translateY(12px); } }
 @media (prefers-reduced-motion: reduce) { .hero-enter, .panel-enter { animation: none; } }
 
+/* Buttons inside panels */
+.action {
+  display: inline-flex; align-items: center; border-radius: .75rem; padding: .4rem .85rem; font-size: .85rem; font-weight: 500;
+  color: #5EEAD4; background: rgba(94, 234, 212, .12); transition: background .2s;
+}
+.action:hover { background: rgba(94, 234, 212, .22); }
+.action:disabled { opacity: .4; cursor: default; }
+.action-quiet { color: var(--color-ink); background: rgba(255, 255, 255, .06); }
+.action-quiet:hover { background: rgba(255, 255, 255, .12); }
+
+.tour-progress { transform-origin: left; animation: tour linear both; }
+@keyframes tour { from { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .tour-progress { animation: none; } }
+
 /* Note body */
 .note { font-size: 15px; }
 .note h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 .75rem; }

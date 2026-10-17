@@ -23,11 +23,31 @@ export default function NotePanel({ note, topics, onSelect, onClose }) {
         <button onClick={onClose} aria-label="Close note" className="btn-icon">×</button>
       </div>
       <div className="px-6 pb-10">
+        {note.type === 'project' && <ProjectCard meta={note.meta ?? {}} />}
         <Markdown body={note.body} onSelect={onSelect} />
         <p className="mt-8 text-sm text-mute">
           Connected to {note.degree} other note{note.degree === 1 ? '' : 's'}.
         </p>
       </div>
     </aside>
+  )
+}
+
+// Header for project notes: screenshot, stack, and links from the note's frontmatter.
+function ProjectCard({ meta }) {
+  if (!meta.image && !meta.stack && !meta.url && !meta.repo) return null
+  return (
+    <div className="mb-5">
+      {meta.image && <img src={meta.image} alt="" className="mb-3 aspect-video w-full rounded-2xl object-cover" />}
+      {Array.isArray(meta.stack) && (
+        <p className="flex flex-wrap gap-1.5">
+          {meta.stack.map(s => <span key={s} className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs text-ink/80">{s}</span>)}
+        </p>
+      )}
+      <p className="mt-3 flex gap-3">
+        {meta.url && <a href={meta.url} target="_blank" rel="noreferrer" className="action">Open it</a>}
+        {meta.repo && <a href={meta.repo} target="_blank" rel="noreferrer" className="action action-quiet">See the code</a>}
+      </p>
+    </div>
   )
 }

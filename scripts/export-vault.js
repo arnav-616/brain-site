@@ -12,6 +12,7 @@ const arg = (name, fallback) => {
   return i > -1 ? process.argv[i + 1] : fallback
 }
 const mode = arg('mode', 'public')
+const readJson = (file, fallback) => { try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return fallback } }
 const vault = resolve(arg('vault', process.env.VAULT_PATH || join(root, '../second_project')))
 const SKIP_DIRS = new Set(['Templates', 'Attachments', 'node_modules'])
 const SKIP_FILES = new Set(['CLAUDE.md'])
@@ -33,7 +34,16 @@ const graphNotes = notes.filter(n => n !== briefing)
 
 let graph, out
 if (mode === 'private') {
-  graph = { ...buildGraph(graphNotes), briefing: briefing ? { created: briefing.created, body: briefing.body } : null }
+  graph = buildGraph(graphNotes)
+  // Private extras for the dashboard: where each note lives (for editing), the briefing, and deadlines.
+  const pathOf = Object.fromEntries(graphNotes.map(n => [n.id, n.path]))
+  const ids = new Set(graphNotes.map(n => n.id))
+  graph.nodes.forEach(n => {
+    const note = graphNotes.find(x => x.id === n.id)
+    Object.assign(n, { path: pathOf[n.id], visibility: note.visibility, missing: note.links.filter(t => !ids.has(t)) })
+  })
+  graph.briefing = briefing ? { created: briefing.created, body: briefing.body, path: briefing.path } : null
+  graph.deadlines = readJson(join(vault, '.brain/deadlines.json'), [])
   out = join(root, '.private/graph.json')
 } else if (mode === 'public') {
   graph = toPublic(graphNotes)

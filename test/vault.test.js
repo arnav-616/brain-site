@@ -111,3 +111,11 @@ describe('dates and topics', () => {
     expect(g.nodes[0].created).toBe('2026-10-13')
   })
 })
+
+describe('project metadata', () => {
+  it('keeps string fields for project cards and drops anything else', () => {
+    const n = parseNote('p.md', note('type: project\nrepo: https://github.com/a/b\nstack: [React, Three.js]\nstatus: 3\nsecret: x', 'body'))
+    expect(n.meta).toEqual({ repo: 'https://github.com/a/b', stack: ['React', 'Three.js'] })
+    expect(buildGraph([n]).nodes[0].meta.repo).toBe('https://github.com/a/b')
+  })
+})

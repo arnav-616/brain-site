@@ -9,6 +9,7 @@
         "area"
       ],
       "body": "# Finance\n\nEverything I'm learning about finance and investing.\n\n## Concepts\n- [[Beta]]\n- [[Market Risk Premium]] — not the same as market expected return!\n- [[CAPM]] and the [[Security Market Line]]\n- [[Systematic Risk]] vs [[Unsystematic Risk]]\n- [[Correlation]] (and why it isn't [[Beta]])\n- [[Portfolio Beta]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] — Lecture 13",
+      "meta": {},
       "created": "2026-10-13",
       "topic": "finance",
       "degree": 9
@@ -23,6 +24,7 @@
         "risk"
       ],
       "body": "# Beta\n\n**In one sentence:** Beta measures how much a stock moves compared to the overall market.\n\n## Notes\n- Learned how to calculate it on .\n\n> [!info] Added by Claude\n> **Formula**\n> $$\\beta = \\frac{\\text{Cov}(R_i, R_m)}{\\text{Var}(R_m)}$$\n> - $R_i$ = the stock's returns, $R_m$ = the market's returns (usually the S&P 500)\n> - Same thing as the **slope** when you regress the stock's returns on the market's returns\n>\n> **How to read it**\n> | Beta | Meaning |\n> |---|---|\n> | β = 1 | Moves with the market |\n> | β > 1 | More volatile than the market (e.g. 1.5 → ~15% move when market moves 10%) |\n> | 0 < β < 1 | Less volatile than the market |\n> | β < 0 | Tends to move opposite to the market |\n>\n> **In Excel/Sheets:** `=SLOPE(stock_returns, market_returns)` or `=COVARIANCE.S(stock, market)/VAR.S(market)`\n>\n> Beta only captures [[Systematic Risk]] (market-wide risk), not risk specific to one company. It's the key input to the [[CAPM]].\n\n## Related\n- [[Finance]]\n- [[CAPM]]\n- [[Systematic Risk]]\n- [[Correlation]] — similar formula, different meaning\n- [[Market Risk Premium]]\n- [[Portfolio Beta]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-13",
       "topic": "finance",
       "degree": 8
@@ -37,6 +39,7 @@
         "risk"
       ],
       "body": "# CAPM\n\n**In one sentence:** The expected return on any asset is equal to the risk-free return plus a premium that reflects the risk (as measured by [[Beta]]) of the asset.\n\n## Notes\n$$E(r_j) = r_f + \\beta_j\\,[E(r_M) - r_f]$$\n\n| Term | Meaning |\n|---|---|\n| $E(r_j)$ | expected return on asset $j$ |\n| $r_f$ | |\n| $\\beta_j$ | [[Systematic Risk]] of asset $j$ |\n| $E(r_M) - r_f$ | [[Market Risk Premium]] (MRP) |\n| $\\beta_j[E(r_M) - r_f]$ | asset $j$'s risk premium |\n\n- Measures systematic risk, not total risk, because [[Unsystematic Risk]] gets diversified away.\n- Plotted, it's the [[Security Market Line]].\n- ⚠️ Avoid: if you're given the MRP, don't subtract $r_f$ again. $0.03 + 1.50(0.08)$, not $0.03 + 1.50(0.08 - 0.03)$.\n\n## Related\n- [[Finance]]\n- [[Beta]]\n- [[Portfolio Beta]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 8
@@ -50,6 +53,7 @@
         "statistics"
       ],
       "body": "# Correlation\n\n**In one sentence:** How much two variables move together, relative to the product of how much each one moves.\n\n## Notes\n$$\\rho_{ij} = \\frac{\\sigma_{ij}}{\\sigma_i\\sigma_j}$$\n- measures how much two variables move together; correlation scales that by both standard deviations.\n- [[Beta]] looks similar (covariance in the numerator) but is importantly different:\n$$\\beta_i = \\frac{\\sigma_{iM}}{\\sigma_M^2} \\neq \\frac{\\sigma_{iM}}{\\sigma_i\\sigma_M} = \\rho_{iM}$$\n- Beta divides by the market's variance only, so it's movement *relative to the market*.\n\n## Related\n- [[Finance]]\n- [[Beta]]\n- [[Unsystematic Risk]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 4
@@ -64,6 +68,7 @@
         "risk"
       ],
       "body": "# Market Risk Premium\n\n**In one sentence:** Market Risk Premium is NOT the same thing as market expected return.\n\n## Notes\n- Easy to mix these up. ⚠️\n\n> [!info] Added by Claude\n> **Market Risk Premium (MRP) = Expected market return − Risk-free rate**\n> $$MRP = E(R_m) - R_f$$\n> - **Market expected return** $E(R_m)$ = the *total* return you expect from the market (e.g. 10%)\n> - **Market risk premium** = only the *extra* return on top of the risk-free rate, as a reward for taking risk (e.g. 10% − 4% = 6%)\n>\n> **Why it matters:** In the [[CAPM]], you multiply [[Beta]] by the **premium**, not the total return:\n> $$E(R_i) = R_f + \\beta \\times (E(R_m) - R_f)$$\n> Common mistake: using $E(R_m)$ where the formula needs $E(R_m) - R_f$. That double-counts the risk-free rate.\n>\n> **Watch the wording in problems:** \"the market's expected return is 10%\" → subtract $R_f$ yourself. \"The market risk premium is 6%\" → plug it in directly.\n\n## Related\n- [[Finance]]\n- [[Beta]]\n- [[CAPM]]\n- [[Security Market Line]] — the MRP is its slope\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-13",
       "topic": "finance",
       "degree": 5
@@ -77,6 +82,7 @@
         "investing"
       ],
       "body": "# Portfolio Beta\n\n**In one sentence:** A portfolio's beta and expected return are just the weighted averages of its assets'.\n\n## Notes\n$$\\beta_p = \\omega_X\\beta_X + \\omega_Y\\beta_Y \\qquad E(r_p) = \\omega_X E(r_X) + \\omega_Y E(r_Y) \\qquad \\omega_X + \\omega_Y = 1$$\n- Alternative: find $E(r_p)$ first, then solve the [[CAPM]] for $\\beta_p$. Same answer.\n- Wording trick: \"three times as much in A as in B\" → $\\omega_A = 3\\omega_B$ → $\\omega_B = \\tfrac14$.\n- Example: 2/3 in X ($\\beta = 1.66$), 1/3 in Y ($\\beta = 0.62$) → $\\beta_p = 1.31$.\n\n## Related\n- [[Finance]]\n- [[Beta]]\n- [[CAPM]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 4
@@ -90,6 +96,7 @@
         "investing"
       ],
       "body": "# Security Market Line\n\n**In one sentence:** The [[CAPM]] drawn as a line: expected return vs. [[Beta]].\n\n## Notes\n- Slope is the MRP: $E(r_M) - r_f$ (see [[Market Risk Premium]]).\n- The market IS average. Beta is units of risk.\n- Above the line = undervalued (U), below = overvalued (O).\n- Undervalued assets have higher returns.\n\n## Related\n- [[Finance]]\n- [[CAPM]]\n- [[Beta]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 5
@@ -103,6 +110,7 @@
         "lecture"
       ],
       "body": "# Risk and the Capital Asset Pricing Model\n\nLecture 13 — Risk & the Capital Asset Pricing Model ([[CAPM]]). Related: [[Finance]], [[Beta]], [[Market Risk Premium]], [[Systematic Risk]], [[Unsystematic Risk]], [[Security Market Line]], [[Correlation]], [[Portfolio Beta]], , .\n\n## Equations\n$$S = \\frac{E(r_P) - r_f}{\\sigma_P}$$\n$$\\omega_X = \\frac{\\sigma_Y^2 - \\sigma_{XY}}{\\sigma_X^2 + \\sigma_Y^2 - 2\\sigma_{XY}}$$\n$$\\sigma_{XY} = \\sigma_X \\sigma_Y \\rho_{XY}$$\n$$\\sigma_P^2 = \\omega_X^2\\sigma_X^2 + \\omega_Y^2\\sigma_Y^2 + 2\\omega_X\\omega_Y\\sigma_X\\sigma_Y\\rho_{XY}$$\n$$E(r_P) = \\omega_X E(r_X) + \\omega_Y E(r_Y)$$\n\n## Two big ideas over two weeks\n| Risk & Return (ch 9) | Market Efficiency (ch 11) |\n|---|---|\n| The SML & CAPM | Kicking a rock – a short story |\n| Beta vs Correlation | Prices & Information |\n| Risk-free rates | Rolling dice & Throwing darts |\n| Market return & MRP | Implications |\n| Investing & Gambling | Reasons to Believe |\n| Flipping coins | Evidence |\n\n## Last week: Portfolios (efficient diversification)\n- We do not like risk, but we do not generally avoid it\n- We take risks because of the potential benefits\n- In financial markets riskier assets provide higher returns\n- Diversification reduces an investor's exposure to risk\n- Not all risk can be diversified away\n\n## Diversifiable risk\n- The risks unique to individual assets are what lead to imperfect correlations between asset returns. Let's consider stocks.\n- This \"unique\" risk can be diversified away by creating portfolios of individual stocks with imperfect correlations (varying \"unique\" risks).\n- Heuristically:\n$$\\text{total risk} \\equiv \\text{systematic risk} + \\text{unsystematic risk}$$\n\n## Systematic risk\n- Systematic risk is defined to be the risk inherent in all risky assets (stocks) and therefore cannot be diversified away by creating portfolios of stocks\n- Some stocks have more systematic risk than other stocks\n- Also commonly referred to as market risk, beta risk, and undiversifiable risk\n- Examples: political risk, business cycles/economy, crude oil\n\n## Unsystematic risk\n- Unsystematic risk is unique to an individual stock (or a small group of stocks or even an industry) and therefore it can be diversified away by creating a portfolio of stocks.\n- Some stocks have more unsystematic risk than other stocks.\n- Also commonly referred to as unique risk, firm-specific risk, idiosyncratic risk, and diversifiable risk.\n- Examples: legal issues, leadership, innovation\n\n## This week: Individual risky assets\n- Need a measure of risk that recognizes the elimination of unsystematic risk through diversification\n- Measure systematic risk, not total risk\n- Capital Asset Pricing Model and Beta as a measure of systematic risk.\n- Next week we will link the portfolio theory from last week with the CAPM from this week as we explore further the role of information and the behavior of individual investors\n\n## Capital Asset Pricing Model\n$$E(r_j) = r_f + \\beta_j\\,[E(r_M) - r_f]$$\n\n| Term | Meaning |\n|---|---|\n| $E(r_j)$ | expected return on asset $j$ |\n| $r_f$ | risk-free rate of return |\n| $\\beta_j$ | systematic risk of asset $j$ |\n| $E(r_M)$ | expected return on the market |\n| $E(r_M) - r_f$ | market risk premium (MRP) |\n| $\\beta_j[E(r_M) - r_f]$ | asset $j$'s risk premium |\n\nThe expected return on any asset is equal to the risk-free return plus a premium that reflects the risk (as measured by beta) of the asset.\n\n## The SML (CAPM)\n- Slope is MRP: $E(r_M) - r_f$\n- Market IS average\n- Beta is units of risk\n- Beta measures movement relative to market:\n$$\\beta_i = \\frac{\\sigma_{iM}}{\\sigma_M^2} \\neq \\frac{\\sigma_{iM}}{\\sigma_i\\sigma_M} = \\rho_{iM}$$\n- U is undervalued, O is overvalued (points above/below the SML on the slide graph).\n- Undervalued assets have higher returns (time value of money)\n\n## Correlation\n$$\\rho_{ij} = \\frac{\\sigma_{ij}}{\\sigma_i\\sigma_j} = \\frac{\\text{covariance of } i \\text{ and } j}{(\\text{std. dev. of } i)(\\text{std. dev. of } j)}$$\n- Covariance measures how much two variables move together\n- Correlation measures how much two variables move together relative to the product of how much those two variables move\n- Beta is similar to correlation (they both have covariance in the numerator), but importantly different from correlation.\n\n## Beta\n- Beta measures systematic risk (market risk, undiversifiable risk)\n$$\\beta_i = \\frac{\\sigma_{iM}}{\\sigma_M^2} = \\frac{\\text{covariance of asset return with market return}}{\\text{variance of market return}}$$\n- Beta measures how much an asset's return moves together with the market return, relative to how much the market return moves\n\n## Market Efficiency\n- \"Kicking a rock\" (slides were title/image only — no text to capture)\n\n---\n\n## Examples\n\n### Example A\nRisk-free rate 3.0%, MRP 8.0%, $\\beta_A = 1.50$, $\\beta_B = 0.90$. Find $E(r_A)$ & $E(r_B)$.\n- $E(r_A) = 0.03 + 1.50(0.08) = 0.1500$ → **15.0%**\n- $E(r_B) = 0.03 + 0.9(0.08) = 0.1020$ → **10.20%**\n- ⚠️ Avoid!!! $E(r_A) = 0.03 + 1.50(0.08 - 0.03) = 0.1050$ — MRP is already $E(r_M) - r_f$, don't subtract $r_f$ again (see [[Market Risk Premium]]).\n\nRisk premiums for the two stocks:\n- A: $1.50(0.08) = 0.1200$ → **12.0%**\n- B: $0.1020 - 0.03 = 0.0720$ → **7.20%**\n\n### Example B\nRisk-free rate 1.5%, expected market return 9.0%, $E(r_X) = 13.95\\%$, $E(r_Y) = 6.15\\%$, $\\beta_Z = 1.38$.\n- $0.1395 = 0.015 + \\beta_X(0.09 - 0.015)$ → $\\beta_X = 1.66$\n- $0.0615 = 0.015 + \\beta_Y(0.09 - 0.015)$ → $\\beta_Y = 0.62$\n- $E(r_Z) = 0.015 + 1.38(0.09 - 0.015)$ → $E(r_Z) = 11.85\\%$\n\nPortfolio 2/3 in X, 1/3 in Y — use $E(r_p) = \\omega_X E(r_X) + \\omega_Y E(r_Y)$, $\\beta_p = \\omega_X\\beta_X + \\omega_Y\\beta_Y$, $\\omega_X + \\omega_Y = 1$:\n- $E(r_p) = \\tfrac{2}{3}(0.1395) + \\tfrac{1}{3}(0.0615) = 0.1135$ → **11.35%**\n- $\\beta_p = \\tfrac{2}{3}(1.66) + \\tfrac{1}{3}(0.62) = 1.3133$ → **1.31**\n- Alternative: $0.1135 = 0.015 + \\beta_p(0.09 - 0.015)$ → $\\beta_p = 1.31$\n\n### Example C\nRisk-free rate 3.0%, MRP 8.0%, $\\beta_A = 1.28$, $\\beta_B = 0.80$.\n\n$E(r_p)$ for 50/50 portfolio:\n- $\\beta_p = 0.50(1.28) + 0.50(0.80) = 1.04$\n- $E(r_p) = 0.03 + 1.04(0.08) = 0.1132$ → **11.32%**\n- Alternative?\n\n$\\beta_p$ if three times as much is invested in A than in B:\n- $\\omega_A = 3\\omega_B$ → $3\\omega_B + \\omega_B = 1$ → $\\omega_B = \\tfrac{1}{4}$\n- $\\beta_p = 0.75(1.28) + 0.25(0.80) =$ **1.16**\n\n### Example D\n$r_f = 3.50\\%$, $E(r_M) = 12.00\\%$, $E(r_A) = 16.42\\%$, $E(r_B) = 9.96\\%$.\n\nWeights for $E(r_p) = 12.50\\%$:\n- $0.1250 = 0.1642\\,\\omega_A + 0.0996(1 - \\omega_A)$ → $\\omega_A = 0.393188$\n- **$\\omega_A = 39.32\\%$, $\\omega_B = 60.68\\%$**\n\nWeights for $\\beta_p = 0.90$:\n- $E(r_p) = 0.035 + 0.90(0.120 - 0.035) = 0.1115$\n- $0.1115 = 0.1642\\,w + 0.0996(1 - w)$ → $w = 0.1842105$\n- **A: 18.42%, B: 81.58%**\n\nPortfolio with one-fourth as much invested in stock B as in stock A:\n- $\\omega_B = \\tfrac{1}{4}\\omega_A$ → $\\omega_A + \\tfrac{1}{4}\\omega_A = 1$ → $\\omega_A = 0.80$\n- $E(r_p) = 0.80(0.1642) + 0.20(0.0996) = 0.15128$ → **15.13%**\n- $0.1513 = 0.035 + \\beta_p(0.085)$ → $\\beta_p = 1.368235$ → **1.37**\n\n## Source\n- Lecture slides: `30026flecture13.pdf` (Lecture 13, 23 slides)",
+      "meta": {},
       "created": "2026-10-13",
       "topic": "finance",
       "degree": 9
@@ -116,6 +124,7 @@
         "risk"
       ],
       "body": "# Systematic Risk\n\n**In one sentence:** The risk inherent in all risky assets, so it can't be diversified away by building a portfolio.\n\n## Notes\n- Also called market risk, beta risk, or undiversifiable risk.\n- Some stocks have more of it than others. [[Beta]] is how we measure it.\n- Examples: political risk, business cycles/the economy, crude oil.\n- total risk ≡ systematic risk + [[Unsystematic Risk]]\n\n## Related\n- [[Finance]]\n- [[CAPM]]\n- [[Unsystematic Risk]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 5
@@ -129,6 +138,7 @@
         "risk"
       ],
       "body": "# Unsystematic Risk\n\n**In one sentence:** Risk unique to one stock (or a small group of stocks, or an industry), so it can be diversified away.\n\n## Notes\n- Also called unique risk, firm-specific risk, idiosyncratic risk, or diversifiable risk.\n- It's what makes asset returns imperfectly correlated, which is exactly why diversification works.\n- Examples: legal issues, leadership, innovation.\n- total risk ≡ [[Systematic Risk]] + unsystematic risk\n\n## Related\n- [[Finance]]\n- [[Systematic Risk]]\n- [[Correlation]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] (Lecture 13)",
+      "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
       "degree": 5
@@ -260,5 +270,5 @@
       "target": "Unsystematic Risk"
     }
   ],
-  "generatedAt": "2026-10-15T22:07:04.093Z"
+  "generatedAt": "2026-10-17T05:09:01.952Z"
 }
