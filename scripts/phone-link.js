@@ -13,4 +13,10 @@ try { host = execFileSync('tailscale', ['ip', '-4'], { encoding: 'utf8' }).trim(
   via = 'your Wi-Fi (phone must be on the same network)'
 }
 if (!host) { console.log('No network address found.'); process.exit(1) }
+// Tailscale's https name (via `tailscale serve`) is a secure origin, which also enables the offline copy.
+let https = null
+try { https = JSON.parse(execFileSync('tailscale', ['status', '--json'], { encoding: 'utf8' })).Self.DNSName.replace(/\.$/, '') } catch { /* no Tailscale */ }
+if (https) {
+  console.log(`\nBest: an https link that also keeps an offline copy on your phone. Run once:\n\n  tailscale serve --bg 5180\n\nthen open on your phone and "Add to Home Screen":\n\n  https://${https}/?key=${phoneKey(root)}\n`)
+}
 console.log(`\nOpen this on your phone (via ${via}), then "Add to Home Screen":\n\n  http://${host}:5180/?key=${phoneKey(root)}\n\nKeep it private: anyone with this link can see your brain.\n`)

@@ -42,7 +42,13 @@ const pageFromHash = () => {
 }
 
 export default function LifeApp() {
-  const { graph, error, reload } = useGraph('/data/graph.private.json')
+  const { graph, error, reload, offlineSince } = useGraph('/data/graph.private.json')
+  // Offline copy on the phone: only over https (Tailscale), where service workers are allowed.
+  useEffect(() => {
+    if ('serviceWorker' in navigator && window.isSecureContext && location.hostname !== 'localhost') {
+      navigator.serviceWorker.register('/brain-sw.js').catch(() => {})
+    }
+  }, [])
   const [page, setPage] = useState(pageFromHash)
   const [selectedId, setSelectedId] = useState(null)
   const [more, setMore] = useState(false)
@@ -115,12 +121,19 @@ export default function LifeApp() {
   return (
     <>
       <GraphExplorer graph={graph} topics={topics} selectedId={selectedId} onSelect={setSelectedId}
-        highlightIds={highlightIds} showControls={page === 'brain'} padRight={!!selected} padLeft="md:pl-[260px]" viewShift={viewShift} />
+        highlightIds={highlightIds} showControls={page === 'brain'} padRight={!!selected} padLeft="md:pl-[260px]" viewShift={viewShift}
+        landmark={Sheet ? 'region' : 'main'} />
 
+      {offlineSince && (
+        <p role="status" className="fixed inset-x-2 top-2 z-50 rounded-xl bg-[#FBBF24]/15 px-4 py-2 text-center text-sm text-[#FBBF24] backdrop-blur md:left-[264px] md:right-8">
+          Offline copy from {new Date(offlineSince).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}. Changes are off until your laptop is back.
+        </p>
+      )}
       {/* Sidebar on desktop, tab bar on phones */}
       <nav aria-label="Sections" className="glass fixed z-40 flex
         inset-x-2 bottom-2 justify-around rounded-2xl px-1 py-1.5
         md:inset-x-auto md:left-4 md:top-4 md:bottom-4 md:w-[220px] md:flex-col md:justify-start md:gap-1 md:rounded-3xl md:p-4">
+        {page === 'brain' && <h1 className="sr-only">{site.title}</h1>}
         <button onClick={() => go('brain')} className="mb-5 hidden px-2 pt-1 text-left md:block">
           <p className="font-display text-lg leading-tight text-ink">{site.title}</p>
           <p className="mt-1 text-xs text-mute">{graph.nodes.length} notes, {graph.links.length} connections</p>

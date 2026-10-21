@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from 'react'
 export default function useGraph(url) {
   const [graph, setGraph] = useState(null)
   const [error, setError] = useState(null)
+  const [offlineSince, setOfflineSince] = useState(null) // set when the phone's offline copy was served
   const reload = useCallback(() => fetch(url, { cache: 'no-store' })
+    .then(r => { setOfflineSince(r.headers.get('x-brain-offline')); return r })
     .then(r => (r.ok ? r.json() : Promise.reject(new Error(`Couldn't load the brain data (${url}). Run the export, then reload.`))))
     .then(next => setGraph(prev => {
       if (prev) {
@@ -15,5 +17,5 @@ export default function useGraph(url) {
     }))
     .catch(e => setError(e.message)), [url])
   useEffect(() => { reload() }, [reload])
-  return { graph, error, reload }
+  return { graph, error, reload, offlineSince }
 }

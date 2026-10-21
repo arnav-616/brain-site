@@ -38,7 +38,7 @@ const jobs = {
     const since = new Date(Date.now() - 3 * 864e5), out = []
     for (const acct of Application('Mail').accounts()) {
       const addrs = acct.emailAddresses()
-      if (addrs.length && addrs.every(a => /@(gmail|googlemail)\.com$/i.test(a))) continue
+      if (addrs.length && addrs.every(a => /@(gmail|googlemail)\\.com$/i.test(a))) continue
       const inbox = acct.mailboxes().find(m => /^inbox$/i.test(m.name()))
       if (!inbox) continue
       for (const m of inbox.messages.whose({ dateReceived: { _greaterThan: since } })().slice(0, 60)) {

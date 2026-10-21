@@ -30,7 +30,7 @@ export default function Search({ nodes, topics, onSelect }) {
     return (
       <button onClick={() => setOpen(true)}
         className="glass rounded-full px-4 py-2 text-sm text-mute hover:text-ink">
-        Search <kbd className="ml-2 hidden text-xs text-mute/70 sm:inline">⌘K</kbd>
+        Search <kbd className="ml-2 hidden text-xs text-mute sm:inline">⌘K</kbd>
       </button>
     )
   }

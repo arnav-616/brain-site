@@ -30,8 +30,8 @@ export function DailyBars({ title, data, color, unit = '' }) {
             </g>
           )
         })}
-        <text x="0" y={H + 13} fill="#8A90B8" fontSize="10">{label(data[0].date)}</text>
-        <text x={W} y={H + 13} fill="#8A90B8" fontSize="10" textAnchor="end">Today</text>
+        <text x="0" y={H + 13} fill="#A0A6CC" fontSize="10">{label(data[0].date)}</text>
+        <text x={W} y={H + 13} fill="#A0A6CC" fontSize="10" textAnchor="end">Today</text>
       </svg>
       {hover !== null && (
         <div className="pointer-events-none absolute -top-1 right-0 rounded-lg border border-white/10 bg-[#10122e] px-2 py-1 text-xs text-ink">

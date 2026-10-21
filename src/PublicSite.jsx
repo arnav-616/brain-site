@@ -65,8 +65,8 @@ export default function PublicSite() {
         showControls={!touring} padRight={!!selected} padLeft={about ? 'md:pl-[470px]' : ''}
         viewShift={window.innerWidth < 768 ? 0 : selected && !touring ? -240 : about ? 230 : 0} />
 
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-10 flex items-start justify-between gap-6 p-4 md:p-7">
-        <div className="pointer-events-auto min-w-0 max-w-lg hero-enter">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-10 flex items-start justify-between gap-6 p-4 md:p-7" role="banner">
+        <div className="scrim pointer-events-auto min-w-0 max-w-lg hero-enter">
           <h1 className="font-display text-[1.75rem] md:text-[2.6rem] leading-[1.05] tracking-[-0.01em] text-ink">{site.title}</h1>
           <p className="mt-3 hidden text-[15px] leading-relaxed text-ink/80 sm:block">
               {site.tagline}

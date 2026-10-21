@@ -46,6 +46,8 @@ Obsidian, and Claude Code.
   change), log health ("slept 7h, gym"), or speak
 - Live: edits in Obsidian show up in seconds, new exports are read automatically, email is checked hourly
 - Keyboard shortcuts (G then a letter), Mac notifications at 8am and 8pm, installable on a phone
+- **Outlook / school email**: through a Microsoft 365 connector in the morning run, or from the Mac Mail app
+- **Offline on your phone**: over Tailscale https, the phone keeps a read-only copy that opens even when the laptop is off
 
 ## Make your own brain
 
@@ -74,6 +76,7 @@ Deploy the public site to Vercel; set `ANTHROPIC_API_KEY` there to switch on **A
 | `npm run notifications:install` / `:remove` | Mac notifications at 8:00 and 20:00 |
 | `npm run create-vault -- <folder>` | Start a new vault from the template |
 | `npm test` | Export, privacy, dashboard, assistant, importer and scheduling tests |
+| `npm run test:ui` | Every page on desktop and phone sizes, plus an accessibility audit (needs both dev servers and Chrome) |
 
 ## How privacy works
 

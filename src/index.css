@@ -5,7 +5,7 @@
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Unbounded", "Manrope", sans-serif;
   --color-ink: #E6E9FF;
-  --color-mute: #8A90B8;
+  --color-mute: #A0A6CC; /* lifted for contrast over the glowing brain */
 }
 
 html, body, #root { height: 100%; margin: 0; overflow: hidden; }
@@ -21,7 +21,7 @@ body {
 @layer components {
 /* Glass: the one surface style used by every floating layer. */
 .glass {
-  background: rgba(16, 18, 46, 0.58);
+  background: rgba(16, 18, 46, 0.74);
   border: 1px solid rgba(160, 170, 255, 0.14);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
@@ -51,6 +51,11 @@ body {
 .node-label { max-width: 280px; padding: 8px 12px; background: rgba(16,18,46,.92); border: 1px solid rgba(160,170,255,.2); border-radius: 14px; font: 400 12.5px/1.45 Manrope, system-ui; color: #C9CDF0; }
 .node-label b { display: block; font-weight: 600; font-size: 13.5px; color: #E6E9FF; }
 .node-label span { display: block; margin-top: 2px; }
+
+/* A soft dark pool behind text that floats over the brain, so it stays readable when a node glows behind it */
+.scrim { position: relative; }
+.scrim::before { content: ''; position: absolute; inset: -28px -40px -28px -28px; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(7, 8, 24, .92), rgba(7, 8, 24, .75) 60%, rgba(7, 8, 24, 0)); }
 
 /* The single orchestrated moment: the title settles in as the brain wakes up. */
 .hero-enter { animation: hero 1.4s cubic-bezier(.2,.7,.2,1) both; }

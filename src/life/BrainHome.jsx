@@ -72,7 +72,7 @@ export default function BrainHome({ graph, onSelect, reload, job, go, open, setO
       md:inset-x-auto md:bottom-auto md:left-[264px] md:top-[6.5rem] md:max-h-[calc(100vh-15rem)] md:w-[380px]">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-mute">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+          <p className="text-xs text-ink/80">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <h1 className="mt-1 font-display text-xl leading-tight text-ink">Good {part}, {site.owner}</h1>
         </div>
         <button onClick={() => setOpen(false)} aria-label="Hide" className="btn-icon">–</button>

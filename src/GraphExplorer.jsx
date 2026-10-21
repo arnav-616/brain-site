@@ -10,7 +10,8 @@ const hasWebGL = (() => {
 })()
 
 // The explorable brain: 3D graph + topic filters + timeline. Shared by the public site and the private app.
-export default function GraphExplorer({ graph, topics, selectedId, onSelect, highlightIds, showControls = true, padLeft, padRight, viewShift }) {
+// `landmark`: 'main' when the map is the page's main content, otherwise a labelled region.
+export default function GraphExplorer({ graph, topics, selectedId, onSelect, highlightIds, showControls = true, padLeft, padRight, viewShift, landmark = 'main' }) {
   const [topic, setTopic] = useState(null)
   const [dayIndex, setDayIndex] = useState(null)
   const [playing, setPlaying] = useState(false)
@@ -28,8 +29,9 @@ export default function GraphExplorer({ graph, topics, selectedId, onSelect, hig
     return { nodes: graph.nodes.filter(n => keep.has(n.id)), links: graph.links.filter(l => keep.has(endId(l.source)) && keep.has(endId(l.target))) }
   }, [graph, topic, dayIndex, day, days.length])
 
+  const Landmark = landmark === 'main' ? 'main' : 'section'
   return (
-    <>
+    <Landmark aria-label={`3D map of ${graph.nodes.length} notes. Use search or the topic filters to explore.`}>
       {hasWebGL
         ? <Suspense fallback={null}><Brain data={view} topics={topics} selectedId={selectedId} highlightIds={highlightIds} onSelect={onSelect} viewShift={viewShift}
             similar={graph.similar} byMeaning={byMeaning} /></Suspense>
@@ -57,7 +59,7 @@ export default function GraphExplorer({ graph, topics, selectedId, onSelect, hig
           </div>
         </footer>
       )}
-    </>
+    </Landmark>
   )
 }
 
@@ -66,7 +68,7 @@ function ListFallback({ graph, topics, onSelect }) {
   const groups = {}
   graph.nodes.forEach(n => { (groups[n.topic ?? 'other'] ??= []).push(n) })
   return (
-    <main className="h-full overflow-y-auto px-4 pb-40 pt-56 md:px-7">
+    <div className="h-full overflow-y-auto px-4 pb-40 pt-56 md:px-7">
       <p className="mb-6 max-w-lg text-sm text-mute">Your browser can't show the 3D map, so here are the notes as a list.</p>
       {Object.entries(groups).map(([t, notes]) => (
         <section key={t} className="mb-6">
@@ -76,6 +78,6 @@ function ListFallback({ graph, topics, onSelect }) {
           </ul>
         </section>
       ))}
-    </main>
+    </div>
   )
 }

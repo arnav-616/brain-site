@@ -16,7 +16,8 @@
     "notifications:remove": "node scripts/install-notifications.js --remove",
     "dev:phone": "npm run export:private && VITE_GRAPH=private vite --host --port 5180 --strictPort",
     "phone:link": "node scripts/phone-link.js",
-    "create-vault": "node scripts/create-vault.js"
+    "create-vault": "node scripts/create-vault.js",
+    "test:ui": "node scripts/ui-check.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.137.0",
@@ -38,10 +39,12 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "axe-core": "^4.10.2",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "puppeteer-core": "^23.11.1",
     "tailwindcss": "^4.3.3",
     "vite": "^6.3.5",
     "vitest": "^5.0.4"
