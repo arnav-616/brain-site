@@ -1,7 +1,7 @@
 // Usage: node scripts/read-apple.js [--vault <path>]
-// Reads the Mac's Calendar (next 14 days), Reminders (open ones) and Notes (edited in the last
-// 7 days) through macOS automation, and writes .brain/calendar.json, .brain/reminders.json and
-// .brain/apple-notes.json in the vault. Each source is independent: if macOS blocks one (no
+// Reads the Mac's Calendar (next 14 days), Reminders (open ones), Mail (last 3 days, non-Gmail accounts
+// such as Outlook) and Notes (edited in the last 7 days) through macOS automation, and writes
+// .brain/calendar.json, reminders.json, mail-local.json and apple-notes.json in the vault. Each source is independent: if macOS blocks one (no
 // permission yet), the others still run. First run may show a macOS "allow access" prompt.
 import { execFile } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
@@ -32,6 +32,21 @@ const jobs = {
     return Application('Reminders').reminders.whose({ completed: false })().map(r => ({
       title: r.name(), due: r.dueDate() ? r.dueDate().toISOString() : null, list: r.container().name(), notes: r.body() || null,
     }))`),
+  // Mail.app: recent inbox mail from accounts that aren't Gmail (Gmail comes in through its own
+  // connector). Add Outlook / school email in System Settings → Internet Accounts and it shows up here.
+  'mail-local': () => jxa(`
+    const since = new Date(Date.now() - 3 * 864e5), out = []
+    for (const acct of Application('Mail').accounts()) {
+      const addrs = acct.emailAddresses()
+      if (addrs.length && addrs.every(a => /@(gmail|googlemail)\.com$/i.test(a))) continue
+      const inbox = acct.mailboxes().find(m => /^inbox$/i.test(m.name()))
+      if (!inbox) continue
+      for (const m of inbox.messages.whose({ dateReceived: { _greaterThan: since } })().slice(0, 60)) {
+        out.push({ account: acct.name(), to: addrs[0] ?? null, from: m.sender(), subject: m.subject(), date: m.dateReceived().toISOString(),
+          read: m.readStatus(), text: (m.content() || '').slice(0, 1500), id: m.messageId() })
+      }
+    }
+    return out.sort((a, b) => b.date.localeCompare(a.date))`, 120000),
   'apple-notes': () => jxa(`
     const since = new Date(Date.now() - 7 * 864e5)
     return Application('Notes').notes.whose({ modificationDate: { _greaterThan: since } })().slice(0, 40).map(n => ({

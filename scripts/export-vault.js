@@ -53,7 +53,7 @@ if (mode === 'private') {
   graph.social = readJson(join(vault, '.brain/social.json'), null)
   graph.state = readJson(join(vault, '.brain/state.json'), {})
   graph.sources = readJson(join(vault, '.brain/sources.json'), {})
-  for (const name of ['calendar', 'reminders', 'apple-notes', 'applications', 'checkins', 'money', 'cards', 'reviews']) {
+  for (const name of ['calendar', 'reminders', 'apple-notes', 'mail-local', 'applications', 'checkins', 'money', 'cards', 'reviews']) {
     graph[name.replace(/-(\w)/g, (_, c) => c.toUpperCase())] = readJson(join(vault, `.brain/${name}.json`), null)
   }
   // Calendar events hidden by the assistant (cancelled, not going) stay out of the dashboard.

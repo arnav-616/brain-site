@@ -11,6 +11,13 @@ const ago = (iso) => {
 export const SOURCES = [
   { id: 'gmail', name: 'Gmail', kind: 'cloud', about: 'Work, school and personal mail, sorted. Drafts replies, never sends.',
     status: g => ({ ok: !!g.state?.gmail?.lastRun, text: g.state?.gmail?.lastRun ? `Checked ${ago(g.state.gmail.lastRun)}` : 'Not checked yet' }) },
+  { id: 'outlook', name: 'Outlook & school email', kind: 'cloud',
+    about: 'Connect Microsoft 365 in claude.ai → Connectors (read in the morning run), or add the account in Mac System Settings → Internet Accounts (read from the Mail app).',
+    status: g => {
+      const n = g.mailLocal?.items?.length ?? 0, accounts = [...new Set((g.mailLocal?.items ?? []).map(m => m.account))]
+      const fromOutlook = (g.email?.items ?? []).some(i => /outlook|microsoft|illinois\.edu/i.test(i.account ?? ''))
+      return n || fromOutlook ? { ok: true, text: n ? `${n} recent messages from ${accounts.join(', ')}` : 'In the morning run' } : { ok: false, text: 'Not connected yet' }
+    } },
   { id: 'github', name: 'GitHub', kind: 'cloud', about: 'Your repos become project notes and portfolio cards.',
     status: g => ({ ok: !!g.state?.github?.lastRun, text: g.state?.github?.lastRun ? `Checked ${ago(g.state.github.lastRun)}` : 'On next refresh' }) },
   { id: 'drive', name: 'Google Drive', kind: 'cloud', about: 'Lecture slides and docs become notes, formulas in LaTeX. Folders in .brain/config.md.',
