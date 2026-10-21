@@ -17,6 +17,8 @@ body {
 }
 :focus-visible { outline: 2px solid #5EEAD4; outline-offset: 2px; border-radius: 6px; }
 
+/* Custom component styles live in the components layer, so Tailwind utilities (like max-md:hidden) can override them. */
+@layer components {
 /* Glass: the one surface style used by every floating layer. */
 .glass {
   background: rgba(16, 18, 46, 0.58);
@@ -133,3 +135,4 @@ body {
 /* Briefing: tighter, sections read as a scannable list */
 .briefing .note h2 { font-size: .95rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid rgba(160,170,255,.1); }
 .briefing .note h2:first-of-type { border-top: 0; padding-top: 0; margin-top: .5rem; }
+}

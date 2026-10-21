@@ -2,7 +2,7 @@
 
 A 3D, explorable map of my second brain: an Obsidian vault that an AI agent grows every morning.
 Every glowing node is a note, colored by topic; every line is a link. Click a node to fly to it and
-read it. **Live:** https://brain-site-three.vercel.app · **How it's built:** [/case-study.html](https://brain-site-three.vercel.app/case-study.html)
+read it. **Live:** https://brain-site-three.vercel.app · **Demo video:** [/demo.mp4](https://brain-site-three.vercel.app/demo.mp4) · **How it's built:** [/case-study.html](https://brain-site-three.vercel.app/case-study.html)
 
 On my laptop, the same brain is the center of a private app for my whole life: a morning briefing,
 sorted email, deadlines, people, an internship tracker, health check-ins, files, feeds and spaced review.

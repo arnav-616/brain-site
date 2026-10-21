@@ -60,7 +60,7 @@ export default function InboxPage({ graph, onSelect, job, reload }) {
                         </div>
                         <p className="text-sm text-ink/80">{m.subject}</p>
                         <p className="mt-1 text-sm text-mute">{m.summary}</p>
-                        <p className="mt-2 flex gap-4 text-sm">
+                        <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                           {m.url && <a href={m.url} target="_blank" rel="noreferrer" className="text-[#5EEAD4] hover:underline">Open in Gmail</a>}
                           {m.draft && <span className="text-[#FBBF24]">Reply drafted in Gmail</span>}
                           {m.note && <NoteLink id={m.note} onSelect={onSelect}>Related note</NoteLink>}

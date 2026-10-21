@@ -34,6 +34,7 @@ const PAGES = [
   ['timeline', 'Timeline', 'clock'], ['review', 'Review', 'cards'], ['settings', 'Settings', 'gear'],
 ]
 const SHORTCUTS = { b: 'brain', t: 'today', i: 'inbox', p: 'people', c: 'career', l: 'life', f: 'feeds', d: 'files', y: 'timeline', r: 'review', s: 'settings' }
+const PHONE_TABS = ['brain', 'today', 'inbox', 'people']
 const SHEETS = { timeline: TimelinePage, people: PeoplePage, career: CareerPage, today: TodayPage, inbox: InboxPage, life: LifePage, feeds: FeedsPage, files: FilesPage, review: ReviewPage, settings: SettingsPage }
 const pageFromHash = () => {
   const p = location.hash.replace(/^#\//, '')
@@ -44,6 +45,7 @@ export default function LifeApp() {
   const { graph, error, reload } = useGraph('/data/graph.private.json')
   const [page, setPage] = useState(pageFromHash)
   const [selectedId, setSelectedId] = useState(null)
+  const [more, setMore] = useState(false)
   const [homeOpen, setHomeOpen] = useState(() => window.innerWidth >= 768)
   const [vw, setVw] = useState(window.innerWidth)
   const job = useJob(reload)
@@ -124,14 +126,28 @@ export default function LifeApp() {
           <p className="mt-1 text-xs text-mute">{graph.nodes.length} notes, {graph.links.length} connections</p>
         </button>
         {PAGES.map(([id, label, icon]) => (
-          <button key={id} onClick={() => go(id)} aria-current={page === id ? 'page' : undefined}
-            className={`nav-item ${page === id ? 'nav-on' : ''} ${['people', 'career', 'feeds', 'files', 'timeline', 'review'].includes(id) ? 'max-md:hidden' : ''}`}>
+          <button key={id} onClick={() => { go(id); setMore(false) }} aria-current={page === id ? 'page' : undefined}
+            className={`nav-item ${page === id ? 'nav-on' : ''} ${PHONE_TABS.includes(id) ? '' : 'max-md:hidden'}`}>
             <Icon name={icon} />
             <span className="text-[11px] md:text-sm">{label}</span>
             {id === 'inbox' && actionCount > 0 && <span className="badge">{actionCount}</span>}
           </button>
         ))}
+        {/* Phones show five tabs; the rest are one tap away under More. */}
+        <button onClick={() => setMore(m => !m)} aria-expanded={more} className={`nav-item md:hidden ${more || !PHONE_TABS.includes(page) ? 'nav-on' : ''}`}>
+          <Icon name="grid" /><span className="text-[11px]">More</span>
+        </button>
       </nav>
+
+      {more && (
+        <div className="glass panel-enter fixed inset-x-2 bottom-[4.6rem] z-40 grid grid-cols-3 gap-1 rounded-2xl p-2 md:hidden" role="menu">
+          {PAGES.filter(([id]) => !PHONE_TABS.includes(id)).map(([id, label, icon]) => (
+            <button key={id} role="menuitem" onClick={() => { go(id); setMore(false) }} className={`nav-item ${page === id ? 'nav-on' : ''}`}>
+              <Icon name={icon} /><span className="text-xs">{label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 flex items-start gap-3 px-4 pt-4 md:pl-[264px] md:pr-8 md:pt-6">
         <div className="pointer-events-auto min-w-0 flex-1 md:max-w-[620px]"><CommandBar onChanged={reload} onSelect={openNote} /></div>

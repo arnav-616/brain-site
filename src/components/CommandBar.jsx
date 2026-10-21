@@ -67,7 +67,7 @@ export default function CommandBar({ onChanged, onSelect }) {
         <input
           ref={input} id="capture" value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); ask() } }}
-          placeholder="Capture a thought or link, or ask your brain…  (N)"
+          placeholder={window.innerWidth < 640 ? 'Capture or ask…' : 'Capture a thought or link, or ask your brain…  (N)'}
           aria-label="Capture a thought or link, or ask a question"
           className="min-w-0 flex-1 bg-transparent py-1.5 text-[15px] text-ink outline-none placeholder:text-mute" />
         {Speech && (

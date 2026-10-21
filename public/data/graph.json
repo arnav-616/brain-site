@@ -14,6 +14,7 @@
       "meta": {
         "repo": "https://github.com/arnav-616/brain-site",
         "url": "https://brain-site-three.vercel.app",
+        "image": "/projects/arnavs-brain.png",
         "stack": [
           "React",
           "Three.js",
@@ -88,6 +89,71 @@
       "degree": 1
     },
     {
+      "id": "STRANDED Minecraft Mod",
+      "title": "STRANDED Minecraft Mod",
+      "type": "project",
+      "tags": [
+        "game-design",
+        "project",
+        "minecraft"
+      ],
+      "body": "# STRANDED Minecraft Mod\n\n**In one sentence:** A survival-horror Minecraft mod, loosely inspired by *Cast Away*: you're the only survivor of a helicopter crash on a remote island — and on the third night, you realize you're not alone.\n\n## Design pillars\n- **Linear progression** — 11 quests that must be done in order, tracked in a craftable Quest Journal.\n- **Survival first** — every item has a grounded reason to exist (the starting kit: flares, matches, a signal mirror, a mylar blanket…).\n- **Horror reveal** — the monster (the Wraith) is never announced; you first see it standing at the treeline.\n- **Emotional arc** — hope, despair, grit, triumph. Day is warm and hopeful; night is oppressive.\n\n## How it plays\n- **Act I — Wake up, stay alive:** search the crash, first night, an SOS the plane doesn't answer.\n- **Act II — Dig in:** shelter, map the island's 5 regions, find a previous castaway's camp and journal.\n- **Act III — It's not just the island:** fire wards off the Wraith (campfire 12 blocks, torch 6, flare blinds it); craft a Bone Fire; build a raft.\n- **Act IV — End it:** lure the Wraith into the Bone Fire's light, then sail home.\n\n## Systems\n- Progression locks: journal gate, recipe locks, a raft sail that only unlocks after the Wraith is dead, minimum in-game days.\n- Cast Away easter eggs: Wilson, the unopenable FedEx package, \"Noname Atoll\", a loading-screen quote that changes.\n- Scope: 1 biome, 1 custom mob, ~10 items, 1 multi-block raft, 11 quests, a text-overlay cutscene system.\n\n## Related\n- [[Software]]",
+      "meta": {
+        "image": "/projects/stranded.png",
+        "stack": [
+          "Minecraft 1.20.x",
+          "Forge or Fabric",
+          "Game design"
+        ],
+        "status": "design",
+        "summary": "Design doc for a survival-horror Minecraft mod: stranded on an island after a helicopter crash, with something in the dark."
+      },
+      "created": "2026-06-04",
+      "topic": "game-design",
+      "degree": 1
+    },
+    {
+      "id": "Transfer Entropy Analysis",
+      "title": "Transfer Entropy Analysis",
+      "type": "project",
+      "tags": [
+        "data-science",
+        "project",
+        "finance",
+        "python"
+      ],
+      "body": "# Transfer Entropy Analysis\n\n**In one sentence:** Which tech stocks move first? I measured directional information flow between six large-cap tech stocks with [[Transfer Entropy]].\n\n## Data\n- Six tickers: AAPL, MSFT, NVDA, AMD, GOOGL, TSLA — same sector, so information flow between them has a plausible reason. 6 tickers = 30 directed pairs.\n- Daily adjusted closes from Yahoo Finance, Aug 16 2019 – Aug 14 2024 (1,257 trading days).\n- Converted prices to [[Log Returns]] first: raw prices trend upward, which breaks the estimator.\n\n## The direction problem\nPyIF's `te_compute(X, Y)` doesn't document which argument is the source. I read `helper.py`: it builds a space of X[t+1], X[t], Y[t] and computes I(X[t+1]; Y[t] | X[t]) — so `te_compute(X, Y)` = TE(Y → X). X is the target, Y the source. Guessing wrong would have flipped every result.\n\n## Results\n| Source → Target | TE | Net flow (source leads) |\n|---|---|---|\n| AMD → MSFT | 0.094 | +0.047 |\n| AMD → NVDA | 0.083 | +0.180 |\n| NVDA → MSFT | 0.079 | +0.085 |\n| AMD → AAPL | 0.052 | +0.182 |\n| GOOGL → NVDA | 0.023 | +0.104 |\n\n- **AMD leads.** I expected NVDA to lead AMD; the data says the opposite. Plausible reason: AMD reacts faster to chip-demand signals (inventory, memory pricing, fab capacity), which reach NVDA the next day.\n- **GOOGL absorbs, doesn't transmit.** Almost every GOOGL-as-source value was negative.\n- Negative TE values just mean no meaningful flow — the Kraskov estimator dips below zero in finite samples.\n\n## Limitations\n- No permutation test (200 shuffles × 30 pairs = 6,000 runs), so some small positive values may be noise.\n- Parameters: k = 1, one-day lag, n = 1,256.\n\n## Related\n- [[Data Science]]\n- [[Finance]]\n- [[Correlation]]",
+      "meta": {
+        "image": "/projects/transfer-entropy.png",
+        "stack": [
+          "Python",
+          "PyIF",
+          "pandas",
+          "NumPy",
+          "Yahoo Finance data"
+        ],
+        "status": "shipped",
+        "summary": "Measured which big tech stocks \"lead\" others day to day, using transfer entropy on five years of daily returns."
+      },
+      "created": "2026-09-10",
+      "topic": "data-science",
+      "degree": 6
+    },
+    {
+      "id": "Data Science",
+      "title": "Data Science",
+      "type": "area",
+      "tags": [
+        "data-science",
+        "area"
+      ],
+      "body": "# Data Science\n\nAnalysis I've done and the ideas behind it.\n\n## Projects\n- [[Transfer Entropy Analysis]] — which tech stocks lead the others\n\n## Concepts\n- [[Transfer Entropy]]\n- [[Log Returns]]\n- [[Correlation]]",
+      "meta": {},
+      "created": "2026-10-21",
+      "topic": "data-science",
+      "degree": 5
+    },
+    {
       "id": "Finance",
       "title": "Finance",
       "type": "area",
@@ -95,11 +161,11 @@
         "finance",
         "area"
       ],
-      "body": "# Finance\n\nEverything I'm learning about finance and investing.\n\n## Concepts\n- [[Beta]]\n- [[Market Risk Premium]] — not the same as market expected return!\n- [[CAPM]] and the [[Security Market Line]]\n- [[Systematic Risk]] vs [[Unsystematic Risk]]\n- [[Correlation]] (and why it isn't [[Beta]])\n- [[Portfolio Beta]]\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] — Lecture 13",
+      "body": "# Finance\n\nEverything I'm learning about finance and investing.\n\n## Concepts\n- [[Beta]]\n- [[Market Risk Premium]] — not the same as market expected return!\n- [[CAPM]] and the [[Security Market Line]]\n- [[Systematic Risk]] vs [[Unsystematic Risk]]\n- [[Correlation]] (and why it isn't [[Beta]])\n- [[Portfolio Beta]]\n- Time value of money: [[Present Value of an Annuity]], [[Future Value of an Annuity]], [[Effective Annual Rate]]\n- [[Log Returns]] and [[Transfer Entropy]] (see [[Transfer Entropy Analysis]])\n\n## Sources\n- [[Risk and the Capital Asset Pricing Model]] — Lecture 13\n- [[The Epidemic of Sports Betting]] — my presentation",
       "meta": {},
       "created": "2026-10-13",
       "topic": "finance",
-      "degree": 9
+      "degree": 16
     },
     {
       "id": "Software",
@@ -109,11 +175,11 @@
         "software",
         "area"
       ],
-      "body": "# Software\n\nThings I build.\n\n## Projects\n- [[Cramr]]: academic command center (shipped, live demo)\n- [[Arnav's Brain]]: this 3D second brain\n- [[PixelMuse Weekly Pose League]]: hackathon retention prototype",
+      "body": "# Software\n\nThings I build.\n\n## Projects\n- [[Cramr]]: academic command center (shipped, live demo)\n- [[Arnav's Brain]]: this 3D second brain\n- [[PixelMuse Weekly Pose League]]: hackathon retention prototype\n- [[Transfer Entropy Analysis]]: stock information-flow analysis in Python ([[Data Science]])\n- [[STRANDED Minecraft Mod]]: design doc for a survival-horror mod",
       "meta": {},
       "created": "2026-10-20",
       "topic": "software",
-      "degree": 3
+      "degree": 6
     },
     {
       "id": "Beta",
@@ -157,6 +223,48 @@
       "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
+      "degree": 7
+    },
+    {
+      "id": "Effective Annual Rate",
+      "title": "Effective Annual Rate",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "time-value-of-money"
+      ],
+      "body": "# Effective Annual Rate\n\n**In one sentence:** The rate you actually earn or pay in a year once compounding is counted.\n\n## Notes\n- The answer is always a **percentage**: if the calculation gives 4.17, the answer is 417%, not 4.17.\n\n> [!info] Added by Claude\n> $$EAR = \\left(1 + \\frac{APR}{m}\\right)^{m} - 1$$\n> $m$ = compounding periods per year.\n\n## Related\n- [[Present Value of an Annuity]]\n- [[Finance]]",
+      "meta": {},
+      "created": "2026-09-10",
+      "topic": "finance",
+      "degree": 2
+    },
+    {
+      "id": "Future Value of an Annuity",
+      "title": "Future Value of an Annuity",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "time-value-of-money"
+      ],
+      "body": "# Future Value of an Annuity\n\n**In one sentence:** How much a series of equal deposits grows to by a future date.\n\n## Notes\n- **Giveaway words:** \"how much will you have after X years\", \"what is the future value of your deposits\", \"you save $X per year, how much do you accumulate\".\n\n> [!info] Added by Claude\n> $$FVA = C \\cdot \\frac{(1+r)^{n} - 1}{r}$$\n\n## Related\n- [[Present Value of an Annuity]]\n- [[Finance]]",
+      "meta": {},
+      "created": "2026-09-10",
+      "topic": "finance",
+      "degree": 2
+    },
+    {
+      "id": "Log Returns",
+      "title": "Log Returns",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "data-science"
+      ],
+      "body": "# Log Returns\n\n**In one sentence:** The daily change in a price, measured as a difference of logs, so it hovers around zero instead of trending up.\n\n## Notes\n$$r_t = \\ln P_t - \\ln P_{t-1}$$\n- Raw prices trend over time, which breaks methods that expect stable data (like [[Transfer Entropy]]). Returns fluctuate around zero.\n- You lose one observation (1,257 prices → 1,256 returns).\n\n## Related\n- [[Transfer Entropy Analysis]]\n- [[Finance]]",
+      "meta": {},
+      "created": "2026-09-10",
+      "topic": "finance",
       "degree": 4
     },
     {
@@ -189,6 +297,20 @@
       "degree": 4
     },
     {
+      "id": "Present Value of an Annuity",
+      "title": "Present Value of an Annuity",
+      "type": "wiki",
+      "tags": [
+        "finance",
+        "time-value-of-money"
+      ],
+      "body": "# Present Value of an Annuity\n\n**In one sentence:** What a stream of equal payments is worth today.\n\n## Notes\n- **Giveaway:** someone gives you something now and you pay it back in equal installments — loans, mortgages, rent-to-own.\n- **Giveaway words:** \"what is it worth today\", \"how much would you pay now\", \"find the present value of the payments\".\n\n> [!info] Added by Claude\n> $$PVA = C \\cdot \\frac{1 - (1+r)^{-n}}{r}$$\n> $C$ = payment per period, $r$ = rate per period, $n$ = number of payments.\n\n## Related\n- [[Future Value of an Annuity]]\n- [[Effective Annual Rate]]\n- [[Finance]]",
+      "meta": {},
+      "created": "2026-09-10",
+      "topic": "finance",
+      "degree": 3
+    },
+    {
       "id": "Security Market Line",
       "title": "Security Market Line",
       "type": "wiki",
@@ -217,6 +339,21 @@
       "degree": 9
     },
     {
+      "id": "The Epidemic of Sports Betting",
+      "title": "The Epidemic of Sports Betting",
+      "type": "source",
+      "tags": [
+        "society",
+        "finance",
+        "presentation"
+      ],
+      "body": "# The Epidemic of Sports Betting\n\nMy presentation. **Thesis:** legalization of sports betting → rapid growth → money and risk impacts.\n\n## Growth\n- Betting on wins, scores and props; apps make it easy. About half of adults bet (Pew 2023).\n- **2018: Murphy v. NCAA** — the Supreme Court let states decide. Phone betting spread fast.\n- 35+ states now allow it; ads and social media normalize it, and college students are constantly exposed.\n\n## Impacts\n- **Money:** billions in bets and taxes, some funding programs like education (AGA 2024).\n- **Engagement:** games feel more interactive; friends compete and discuss (Pew 2023).\n- **Addiction:** apps make it accessible to young adults — risky habits and potential addiction (NCPG 2024).\n\n**Takeaway:** enjoy responsibly — balance fun with caution.\n\n## Related\n- [[Finance]]",
+      "meta": {},
+      "created": "2026-03-30",
+      "topic": "society",
+      "degree": 1
+    },
+    {
       "id": "Systematic Risk",
       "title": "Systematic Risk",
       "type": "wiki",
@@ -228,6 +365,21 @@
       "meta": {},
       "created": "2026-10-15",
       "topic": "finance",
+      "degree": 5
+    },
+    {
+      "id": "Transfer Entropy",
+      "title": "Transfer Entropy",
+      "type": "wiki",
+      "tags": [
+        "data-science",
+        "statistics",
+        "finance"
+      ],
+      "body": "# Transfer Entropy\n\n**In one sentence:** Does knowing A's past help predict B's next value, beyond what B's own past already tells you? If yes, information flows from A to B.\n\n## Notes\n$$TE(A \\to B) = I(B_{t+1};\\, A_t \\mid B_t)$$\n- It's **directional**: TE(A → B) and TE(B → A) can be completely different. That asymmetry is the point — unlike [[Correlation]], which is symmetric.\n- Works on stationary data, so use [[Log Returns]], not prices.\n- Small negative estimates (Kraskov kNN estimator) mean \"no flow\", not negative information.\n- Check significance with a permutation test: shuffle the source, rebuild the null distribution.\n\n## Related\n- [[Transfer Entropy Analysis]]\n- [[Data Science]]",
+      "meta": {},
+      "created": "2026-09-10",
+      "topic": "data-science",
       "degree": 5
     },
     {
@@ -263,6 +415,42 @@
       "target": "Software"
     },
     {
+      "source": "STRANDED Minecraft Mod",
+      "target": "Software"
+    },
+    {
+      "source": "Transfer Entropy Analysis",
+      "target": "Transfer Entropy"
+    },
+    {
+      "source": "Transfer Entropy Analysis",
+      "target": "Log Returns"
+    },
+    {
+      "source": "Transfer Entropy Analysis",
+      "target": "Data Science"
+    },
+    {
+      "source": "Transfer Entropy Analysis",
+      "target": "Finance"
+    },
+    {
+      "source": "Transfer Entropy Analysis",
+      "target": "Correlation"
+    },
+    {
+      "source": "Data Science",
+      "target": "Transfer Entropy"
+    },
+    {
+      "source": "Data Science",
+      "target": "Log Returns"
+    },
+    {
+      "source": "Data Science",
+      "target": "Correlation"
+    },
+    {
       "source": "Finance",
       "target": "Beta"
     },
@@ -296,7 +484,39 @@
     },
     {
       "source": "Finance",
+      "target": "Present Value of an Annuity"
+    },
+    {
+      "source": "Finance",
+      "target": "Future Value of an Annuity"
+    },
+    {
+      "source": "Finance",
+      "target": "Effective Annual Rate"
+    },
+    {
+      "source": "Finance",
+      "target": "Log Returns"
+    },
+    {
+      "source": "Finance",
+      "target": "Transfer Entropy"
+    },
+    {
+      "source": "Finance",
       "target": "Risk and the Capital Asset Pricing Model"
+    },
+    {
+      "source": "Finance",
+      "target": "The Epidemic of Sports Betting"
+    },
+    {
+      "source": "Software",
+      "target": "Transfer Entropy Analysis"
+    },
+    {
+      "source": "Software",
+      "target": "Data Science"
     },
     {
       "source": "Beta",
@@ -353,6 +573,18 @@
     {
       "source": "Correlation",
       "target": "Risk and the Capital Asset Pricing Model"
+    },
+    {
+      "source": "Effective Annual Rate",
+      "target": "Present Value of an Annuity"
+    },
+    {
+      "source": "Future Value of an Annuity",
+      "target": "Present Value of an Annuity"
+    },
+    {
+      "source": "Log Returns",
+      "target": "Transfer Entropy"
     },
     {
       "source": "Market Risk Premium",
@@ -385,6 +617,10 @@
     {
       "source": "Systematic Risk",
       "target": "Unsystematic Risk"
+    },
+    {
+      "source": "Transfer Entropy",
+      "target": "Correlation"
     }
   ],
   "similar": [
@@ -394,110 +630,195 @@
       "score": 0.13
     },
     {
-      "a": "Cramr",
-      "b": "Software",
+      "a": "Arnav's Brain",
+      "b": "Cramr",
       "score": 0.13
     },
     {
       "a": "PixelMuse Weekly Pose League",
       "b": "Software",
-      "score": 0.27
+      "score": 0.24
     },
     {
-      "a": "Finance",
-      "b": "CAPM",
-      "score": 0.26
+      "a": "STRANDED Minecraft Mod",
+      "b": "Software",
+      "score": 0.12
+    },
+    {
+      "a": "Transfer Entropy Analysis",
+      "b": "Transfer Entropy",
+      "score": 0.21
+    },
+    {
+      "a": "Transfer Entropy Analysis",
+      "b": "Data Science",
+      "score": 0.18
+    },
+    {
+      "a": "Transfer Entropy Analysis",
+      "b": "Log Returns",
+      "score": 0.15
+    },
+    {
+      "a": "Data Science",
+      "b": "Finance",
+      "score": 0.23
+    },
+    {
+      "a": "Data Science",
+      "b": "Software",
+      "score": 0.22
+    },
+    {
+      "a": "Data Science",
+      "b": "Transfer Entropy",
+      "score": 0.22
     },
     {
       "a": "Finance",
       "b": "Security Market Line",
-      "score": 0.25
+      "score": 0.28
     },
     {
       "a": "Finance",
-      "b": "Market Risk Premium",
-      "score": 0.17
+      "b": "CAPM",
+      "score": 0.28
     },
     {
       "a": "Beta",
       "b": "Correlation",
-      "score": 0.18
+      "score": 0.22
     },
     {
       "a": "Beta",
-      "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.15
+      "b": "CAPM",
+      "score": 0.21
     },
     {
       "a": "Beta",
       "b": "Market Risk Premium",
-      "score": 0.15
-    },
-    {
-      "a": "CAPM",
-      "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.29
+      "score": 0.2
     },
     {
       "a": "CAPM",
       "b": "Market Risk Premium",
-      "score": 0.27
+      "score": 0.38
+    },
+    {
+      "a": "CAPM",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.35
+    },
+    {
+      "a": "CAPM",
+      "b": "Security Market Line",
+      "score": 0.35
     },
     {
       "a": "Correlation",
       "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.28
+      "score": 0.32
+    },
+    {
+      "a": "Effective Annual Rate",
+      "b": "Present Value of an Annuity",
+      "score": 0.29
+    },
+    {
+      "a": "Effective Annual Rate",
+      "b": "Future Value of an Annuity",
+      "score": 0.2
+    },
+    {
+      "a": "Effective Annual Rate",
+      "b": "Finance",
+      "score": 0.2
+    },
+    {
+      "a": "Future Value of an Annuity",
+      "b": "Present Value of an Annuity",
+      "score": 0.34
+    },
+    {
+      "a": "Future Value of an Annuity",
+      "b": "Finance",
+      "score": 0.21
+    },
+    {
+      "a": "Log Returns",
+      "b": "Data Science",
+      "score": 0.2
+    },
+    {
+      "a": "Log Returns",
+      "b": "Transfer Entropy",
+      "score": 0.14
     },
     {
       "a": "Market Risk Premium",
       "b": "Security Market Line",
+      "score": 0.31
+    },
+    {
+      "a": "Market Risk Premium",
+      "b": "Finance",
+      "score": 0.23
+    },
+    {
+      "a": "Portfolio Beta",
+      "b": "CAPM",
+      "score": 0.22
+    },
+    {
+      "a": "Portfolio Beta",
+      "b": "Risk and the Capital Asset Pricing Model",
       "score": 0.21
     },
     {
       "a": "Portfolio Beta",
-      "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.16
+      "b": "Security Market Line",
+      "score": 0.2
     },
     {
-      "a": "Portfolio Beta",
+      "a": "Present Value of an Annuity",
       "b": "Finance",
-      "score": 0.14
-    },
-    {
-      "a": "Portfolio Beta",
-      "b": "CAPM",
-      "score": 0.13
-    },
-    {
-      "a": "Security Market Line",
-      "b": "CAPM",
-      "score": 0.24
+      "score": 0.19
     },
     {
       "a": "Security Market Line",
       "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.23
+      "score": 0.28
     },
     {
       "a": "Risk and the Capital Asset Pricing Model",
       "b": "Systematic Risk",
-      "score": 0.3
+      "score": 0.34
+    },
+    {
+      "a": "The Epidemic of Sports Betting",
+      "b": "Finance",
+      "score": 0.18
     },
     {
       "a": "Systematic Risk",
       "b": "Unsystematic Risk",
-      "score": 0.24
+      "score": 0.31
     },
     {
       "a": "Systematic Risk",
       "b": "CAPM",
-      "score": 0.17
+      "score": 0.27
     },
     {
       "a": "Unsystematic Risk",
       "b": "Risk and the Capital Asset Pricing Model",
-      "score": 0.28
+      "score": 0.31
+    },
+    {
+      "a": "Unsystematic Risk",
+      "b": "CAPM",
+      "score": 0.19
     }
   ],
-  "generatedAt": "2026-10-21T04:26:14.659Z"
+  "generatedAt": "2026-10-21T05:41:20.823Z"
 }
