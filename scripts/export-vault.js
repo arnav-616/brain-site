@@ -56,6 +56,9 @@ if (mode === 'private') {
   for (const name of ['calendar', 'reminders', 'apple-notes', 'applications', 'checkins', 'money', 'cards', 'reviews']) {
     graph[name.replace(/-(\w)/g, (_, c) => c.toUpperCase())] = readJson(join(vault, `.brain/${name}.json`), null)
   }
+  // Calendar events hidden by the assistant (cancelled, not going) stay out of the dashboard.
+  const hidden = readJson(join(vault, '.brain/hidden.json'), { events: [] }).events ?? []
+  if (graph.calendar?.items) graph.calendar.items = graph.calendar.items.filter(e => !hidden.some(h => h.title === e.title && h.start === e.start))
   graph.suggestions = unlinkedMentions(graph.nodes)
   graph.similar = similarPairs(graph.nodes.filter(n => !['daily', 'inbox'].includes(n.type)))
   out = join(root, '.private/graph.json')

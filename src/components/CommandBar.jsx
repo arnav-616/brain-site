@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Markdown from '../Markdown'
 import { call, runJob } from '../api'
 import { isCheckin } from '../../lib/life.js'
@@ -110,11 +110,21 @@ export default function CommandBar({ onChanged, onSelect }) {
   )
 }
 
-// The assistant's answer, plus any changes it proposes. Nothing changes until you press Apply.
+// The assistant's answer, plus any changes it proposes, each resolved to exactly what it will touch.
+// Nothing changes until you press Apply; anything that can't be found (or is ambiguous) is shown and left unticked.
 function Answer({ reply, done, onSelect, onApplied }) {
   const { answer, actions, rejected } = parseActions(reply)
-  const [picked, setPicked] = useState(() => actions.map(() => true))
+  const [preview, setPreview] = useState(null) // [{ok, said, error}] per action
+  const [picked, setPicked] = useState([])
   const [result, setResult] = useState(null)
+
+  useEffect(() => {
+    if (!done || !actions.length) return
+    call('previewActions', { actions })
+      .then(({ results }) => { setPreview(results); setPicked(results.map(r => r.ok)) })
+      .catch(e => setResult({ error: e.message }))
+  }, [done, reply]) // eslint-disable-line react-hooks/exhaustive-deps -- re-preview only when the reply changes
+
   async function apply() {
     const chosen = actions.filter((_, i) => picked[i])
     chosen.filter(a => a.type === 'draft_email').forEach(a => window.open(gmailDraftUrl(a), '_blank'))
@@ -124,24 +134,32 @@ function Answer({ reply, done, onSelect, onApplied }) {
       onApplied()
     } catch (e) { setResult({ error: e.message }) }
   }
+
   return (
     <div className="mt-2">
       <Markdown body={answer} onSelect={onSelect} />
       {done && actions.length > 0 && !result?.ok && (
         <div className="mt-3 rounded-xl border border-[#5EEAD4]/25 bg-[#5EEAD4]/[0.05] p-3">
           <p className="mb-2 text-sm font-medium text-ink">Proposed changes</p>
-          <ul className="space-y-1.5">
-            {actions.map((a, i) => (
-              <li key={i}>
-                <label className="flex items-start gap-2 text-sm text-ink/90">
-                  <input type="checkbox" checked={picked[i]} onChange={e => setPicked(p => p.map((v, j) => (j === i ? e.target.checked : v)))} className="mt-1 accent-[#5EEAD4]" />
-                  {describe(a)}
-                </label>
-              </li>
-            ))}
-          </ul>
+          {!preview && <p className="text-sm text-mute animate-pulse">Checking what each change would touch…</p>}
+          {preview && (
+            <ul className="space-y-1.5">
+              {actions.map((a, i) => (
+                <li key={i}>
+                  <label className={`flex items-start gap-2 text-sm ${preview[i].ok ? 'text-ink/90' : 'text-mute'}`}>
+                    <input type="checkbox" checked={!!picked[i]} disabled={!preview[i].ok}
+                      onChange={e => setPicked(p => p.map((v, j) => (j === i ? e.target.checked : v)))} className="mt-1 accent-[#5EEAD4]" />
+                    <span>
+                      {preview[i].ok ? preview[i].said : describe(a)}
+                      {!preview[i].ok && <span className="block text-xs text-[#F472B6]">{preview[i].error}</span>}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
           {rejected.length > 0 && <p className="mt-2 text-xs text-mute">Skipped: {rejected.join('; ')}</p>}
-          <button onClick={apply} disabled={!picked.some(Boolean)} className="action mt-3">Apply</button>
+          <button onClick={apply} disabled={!preview || !picked.some(Boolean)} className="action mt-3">Apply</button>
         </div>
       )}
       {result?.ok && <p className="mt-3 text-sm text-[#5EEAD4]">{result.ok}</p>}

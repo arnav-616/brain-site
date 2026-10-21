@@ -26,3 +26,6 @@ dist-ssr
 # Full private brain — never commit
 .private/
 .vercel
+
+# Duplicate copies made by iCloud/Finder ("file 2.html")
+* [0-9].*
