@@ -1,0 +1,9 @@
+{
+  "owner": "Arnav",
+  "title": "Arnav's Brain",
+  "tagline": "Everything I'm learning and building, mapped as one network. An AI agent reads my sources and files new notes into it every morning.",
+  "siteUrl": "https://brain-site-three.vercel.app",
+  "vaultPath": "../second_project",
+  "vaultName": "second_project",
+  "askExamples": ["What has Arnav built?", "Explain CAPM simply", "How is beta different from correlation?"]
+}

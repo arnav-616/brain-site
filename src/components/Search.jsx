@@ -18,11 +18,13 @@ export default function Search({ nodes, topics, onSelect }) {
   }, [open])
   useEffect(() => { if (open) { setQ(''); setI(0) } }, [open])
 
-  const results = nodes
-    .filter(n => n.title.toLowerCase().includes(q.toLowerCase()) || n.tags.some(t => t.includes(q.toLowerCase())))
-    .sort((a, b) => b.degree - a.degree)
-    .slice(0, 8)
-  const pick = (n) => { onSelect(n.id); setOpen(false) }
+  // With an empty box, show the notes you opened recently (remembered in this browser only).
+  const recent = q ? [] : readRecent().map(id => nodes.find(n => n.id === id)).filter(Boolean)
+  const results = q
+    ? nodes.filter(n => n.title.toLowerCase().includes(q.toLowerCase()) || n.tags.some(t => t.includes(q.toLowerCase())))
+      .sort((a, b) => b.degree - a.degree).slice(0, 8)
+    : [...recent, ...[...nodes].sort((a, b) => b.degree - a.degree).filter(n => !recent.includes(n))].slice(0, 8)
+  const pick = (n) => { saveRecent(n.id); onSelect(n.id); setOpen(false) }
 
   if (!open) {
     return (
@@ -43,6 +45,7 @@ export default function Search({ nodes, topics, onSelect }) {
             if (e.key === 'Enter' && results[i]) pick(results[i])
           }}
           className="w-full bg-transparent px-5 py-4 text-ink outline-none border-b border-white/10 placeholder:text-mute" />
+        {!q && recent.length > 0 && <p className="px-4 pt-2 text-xs text-mute">Recently opened</p>}
         <ul className="max-h-80 overflow-y-auto py-1">
           {results.length === 0 && <li className="px-4 py-3 text-sm text-mute">No notes match that</li>}
           {results.map((n, j) => (
@@ -56,4 +59,12 @@ export default function Search({ nodes, topics, onSelect }) {
       </div>
     </div>
   )
+}
+
+const KEY = 'brain.recentNotes'
+function readRecent() {
+  try { return JSON.parse(localStorage.getItem(KEY)) ?? [] } catch { return [] }
+}
+function saveRecent(id) {
+  try { localStorage.setItem(KEY, JSON.stringify([id, ...readRecent().filter(x => x !== id)].slice(0, 5))) } catch { /* storage blocked */ }
 }

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { skills, projects } from '../../lib/showcase.js'
+import site from '../site'
 
 // Public "About" drawer: what I know (from the graph) and what I've built.
 export default function AboutPanel({ graph, topics, onSelect, onClose, onTour }) {
@@ -16,11 +17,14 @@ export default function AboutPanel({ graph, topics, onSelect, onClose, onTour })
       </div>
       <div className="px-6 pb-10">
         <p className="mt-3 text-[15px] leading-relaxed text-ink/80">
-          I'm Arnav. This is my second brain: every concept I learn and project I build is a note, and every link
+          I'm {site.owner}. This is my second brain: every concept I learn and project I build is a note, and every link
           between them is a line. Each morning an AI agent I built reads my sources, writes new notes in my words, links
           them, and republishes this map. Private notes never leave my laptop.
         </p>
-        <button onClick={onTour} className="action mt-4">Take the 60-second tour</button>
+        <p className="mt-4 flex flex-wrap gap-2">
+          <button onClick={onTour} className="action">Take the 60-second tour</button>
+          <a href="/case-study.html" className="action action-quiet">How I built this</a>
+        </p>
 
         {projectList.length > 0 && (
           <section className="mt-8">

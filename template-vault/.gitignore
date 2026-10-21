@@ -1,0 +1,13 @@
+.DS_Store
+# Obsidian per-device UI state (changes constantly)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.trash/
+
+# Raw data exports and local file index stay on this laptop
+Imports/
+.brain/files.json
+.brain/social.json
+.brain/calendar.json
+.brain/reminders.json
+.brain/apple-notes.json

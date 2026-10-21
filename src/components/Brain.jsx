@@ -5,6 +5,7 @@ import {
 } from 'three'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { colorOf } from '../theme'
+import { summaryOf } from '../../lib/showcase.js'
 
 // The bloom pass gamma-encodes the scene a second time, so the clear color is pre-darkened:
 // this renders on screen close to the page background (#070818).
@@ -59,29 +60,30 @@ function textSprite(text, color) {
   return sprite
 }
 
-// Pulls notes that share a topic toward each other, so topics form visible regions.
-function clusterForce() {
+// Gives every topic its own region of space (evenly spread on a sphere) and pulls each note
+// toward its topic's region, so topics read as separate galaxies.
+function clusterForce(topicList) {
   let nodes = []
+  const R = 90 + 25 * topicList.length
+  const anchors = new Map(topicList.map((t, i) => {
+    const y = topicList.length === 1 ? 0 : 1 - (2 * i) / (topicList.length - 1)
+    const r = Math.sqrt(1 - y * y), phi = i * Math.PI * (3 - Math.sqrt(5))
+    return [t, { x: Math.cos(phi) * r * R, y: y * R * 0.7, z: Math.sin(phi) * r * R }]
+  }))
   const force = (alpha) => {
-    const sum = {}
     for (const n of nodes) {
-      if (!n.topic) continue
-      const s = (sum[n.topic] ??= { x: 0, y: 0, z: 0, k: 0 })
-      s.x += n.x; s.y += n.y; s.z += n.z; s.k++
-    }
-    for (const n of nodes) {
-      const s = n.topic && sum[n.topic]
-      if (!s || s.k < 2) continue
-      n.vx += (s.x / s.k - n.x) * alpha * 0.12
-      n.vy += (s.y / s.k - n.y) * alpha * 0.12
-      n.vz += (s.z / s.k - n.z) * alpha * 0.12
+      const a = n.topic && anchors.get(n.topic)
+      if (!a) continue
+      n.vx += (a.x - n.x) * alpha * 0.08
+      n.vy += (a.y - n.y) * alpha * 0.08
+      n.vz += (a.z - n.z) * alpha * 0.08
     }
   }
   force.initialize = (n) => { nodes = n }
   return force
 }
 
-export default function Brain({ data, topics, selectedId, highlightIds, onSelect }) {
+export default function Brain({ data, topics, selectedId, highlightIds, onSelect, viewShift = 0, similar = [], byMeaning = false }) {
   const fg = useRef()
   const fitted = useRef(false)
   const [hover, setHover] = useState(null)
@@ -104,7 +106,6 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
     // Spread notes out, and start close enough that a small brain still fills the view.
     g.d3Force('charge').strength(-110)
     g.d3Force('link').distance(42)
-    g.d3Force('cluster', clusterForce())
     g.cameraPosition({ x: 0, y: 0, z: 200 + 50 * Math.sqrt(data.nodes.length) })
     const controls = g.controls()
     controls.autoRotate = !reducedMotion
@@ -119,6 +120,34 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- scene setup runs once
   }, [])
+
+  // Topic regions: re-anchor when the set of topics changes.
+  useEffect(() => {
+    fg.current.d3Force('cluster', clusterForce([...topics.keys()]))
+    fg.current.d3ReheatSimulation()
+  }, [topics])
+
+  // "Arrange by meaning": springs between notes that use similar words, so related ideas drift
+  // together even when they aren't linked.
+  useEffect(() => {
+    const g = fg.current
+    if (!byMeaning) { g.d3Force('meaning', null); g.d3ReheatSimulation(); return }
+    let nodes = []
+    const force = (alpha) => {
+      const byId = new Map(nodes.map(n => [n.id, n]))
+      for (const p of similar) {
+        const a = byId.get(p.a), b = byId.get(p.b)
+        if (!a || !b) continue
+        const k = alpha * p.score * 0.6
+        for (const ax of ['x', 'y', 'z']) { const d = (b[ax] - a[ax]) * k; a['v' + ax] += d; b['v' + ax] -= d }
+      }
+    }
+    force.initialize = (n) => { nodes = n }
+    g.d3Force('meaning', force)
+    g.d3Force('cluster', byMeaning ? null : g.d3Force('cluster'))
+    g.d3ReheatSimulation()
+    return () => { g.d3Force('meaning', null); g.d3Force('cluster', clusterForce([...topics.keys()])) }
+  }, [byMeaning, similar, topics])
 
   // Topic labels float above the middle of each topic's region.
   const labels = useRef(new Map())
@@ -146,6 +175,41 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
       if (s) sprite.position.set(s.x / s.k, s.top + 22, s.z / s.k)
     }
   }
+
+  // Keep the brain centred in the free part of the screen (beside panels, not behind them) by
+  // sliding the camera's view window. Animated, so opening a panel glides the brain aside.
+  const shift = useRef(0)
+  useEffect(() => {
+    const cam = fg.current?.camera()
+    if (!cam) return
+    const from = shift.current, start = performance.now(), dur = reducedMotion ? 0 : 600
+    let raf
+    const step = (t) => {
+      const k = dur ? Math.min(1, (t - start) / dur) : 1
+      shift.current = from + (viewShift - from) * (1 - Math.pow(1 - k, 3))
+      cam.setViewOffset(size.w, size.h, -shift.current, 0, size.w, size.h)
+      cam.updateProjectionMatrix()
+      if (k < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
+  }, [viewShift, size])
+
+  // Notes added in the last day breathe softly so new knowledge stands out.
+  useEffect(() => {
+    if (reducedMotion) return
+    const since = new Date(Date.now() - 864e5).toLocaleDateString('en-CA')
+    const fresh = data.nodes.filter(n => n.created && n.created >= since)
+    if (!fresh.length) return
+    let raf
+    const loop = (t) => {
+      const k = 1 + 0.35 * Math.sin(t / 450)
+      for (const n of fresh) { const g = n.__glow; if (g) g.scale.setScalar(g.userData.base * k) }
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(raf)
+  }, [data, topics, highlightIds]) // glow sprites are rebuilt when these change
 
   // Synapses: every so often a pulse of light runs along a random connection.
   useEffect(() => {
@@ -190,6 +254,8 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
     const boost = highlightIds?.has(node.id) ? 1.7 : 1
     const s = (10 + Math.cbrt(2 + node.degree * 2) * 6) * boost
     sprite.scale.set(s, s, 1)
+    sprite.userData.base = s
+    node.__glow = sprite
     return sprite
   }, [topics, highlightIds])
 
@@ -201,7 +267,10 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
       graphData={data}
       controlType="orbit"
       backgroundColor={BG}
-      nodeLabel={n => `<div class="node-label">${escapeHtml(n.title)}</div>`}
+      nodeLabel={n => {
+        const line = summaryOf(n).replace(/\[\[([^\]|]+)(\|([^\]]*))?\]\]/g, (_, t, _a, alias) => alias || t).replace(/[*_$`]/g, '')
+        return `<div class="node-label"><b>${escapeHtml(n.title)}</b>${line ? `<span>${escapeHtml(line.length > 110 ? line.slice(0, 107) + '…' : line)}</span>` : ''}</div>`
+      }}
       nodeVal={n => 1.5 + n.degree * 1.5}
       nodeColor={n => (lit(n.id) ? colorOf(n, topics) : '#1a1d3d')}
       nodeOpacity={0.95}
@@ -224,7 +293,8 @@ export default function Brain({ data, topics, selectedId, highlightIds, onSelect
       onEngineStop={() => {
         placeLabels()
         // Frame the whole brain once, after the layout first settles.
-        if (!fitted.current) { fitted.current = true; fg.current.zoomToFit(900, 140) }
+        // Ignore lone unlinked notes so they don't shrink the whole brain to a dot.
+        if (!fitted.current) { fitted.current = true; fg.current.zoomToFit(900, 90, n => n.degree > 0) }
       }}
     />
   )

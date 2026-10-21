@@ -76,6 +76,11 @@ describe('toPublic', () => {
 })
 
 describe('findLeaks', () => {
+  it('ignores lines a public note also contains, like callout headers', () => {
+    const pubNote = parseNote('p.md', note('visibility: public', '> [!info] Added by Claude\nok'))
+    const privNote = parseNote('q.md', note('visibility: private', '> [!info] Added by Claude\nsecret stuff here that is long'))
+    expect(findLeaks(toPublic([pubNote, privNote]), [pubNote, privNote])).toEqual([])
+  })
   it('does not mistake a created date for a private daily-note title', () => {
     const g = { nodes: [{ id: 'Beta', title: 'Beta', body: 'ok', created: '2026-10-13' }], links: [], generatedAt: '2026-10-13T00:00:00Z' }
     expect(findLeaks(g, notes)).toEqual([])

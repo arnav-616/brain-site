@@ -46,7 +46,9 @@ body {
 .timeline::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -6px; border-radius: 50%; background: #E6E9FF; box-shadow: 0 0 12px #5EEAD4; }
 .timeline::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: #E6E9FF; box-shadow: 0 0 12px #5EEAD4; }
 
-.node-label { padding: 4px 10px; background: rgba(16,18,46,.85); border: 1px solid rgba(160,170,255,.2); border-radius: 999px; font: 500 13px Manrope, system-ui; color: #E6E9FF; }
+.node-label { max-width: 280px; padding: 8px 12px; background: rgba(16,18,46,.92); border: 1px solid rgba(160,170,255,.2); border-radius: 14px; font: 400 12.5px/1.45 Manrope, system-ui; color: #C9CDF0; }
+.node-label b { display: block; font-weight: 600; font-size: 13.5px; color: #E6E9FF; }
+.node-label span { display: block; margin-top: 2px; }
 
 /* The single orchestrated moment: the title settles in as the brain wakes up. */
 .hero-enter { animation: hero 1.4s cubic-bezier(.2,.7,.2,1) both; }
@@ -54,6 +56,36 @@ body {
 .panel-enter { animation: panel .35s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes panel { from { opacity: 0; transform: translateY(12px); } }
 @media (prefers-reduced-motion: reduce) { .hero-enter, .panel-enter { animation: none; } }
+
+/* Life app */
+.life-bg {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(167, 139, 250, .14), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(94, 234, 212, .10), transparent 60%),
+    #070818;
+}
+.nav-item {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: .15rem;
+  border-radius: .9rem; padding: .45rem .6rem; color: var(--color-mute); transition: color .2s, background .2s;
+}
+@media (min-width: 768px) { .nav-item { flex-direction: row; gap: .75rem; padding: .6rem .75rem; } }
+.nav-item:hover { color: var(--color-ink); background: rgba(255, 255, 255, .04); }
+.nav-on { color: var(--color-ink); background: rgba(94, 234, 212, .10); }
+.nav-on svg { color: #5EEAD4; }
+.badge {
+  position: absolute; top: .2rem; right: .35rem; min-width: 1.1rem; border-radius: 999px; padding: 0 .3rem;
+  background: #F472B6; color: #070818; font-size: .65rem; font-weight: 700; line-height: 1.1rem; text-align: center;
+}
+@media (min-width: 768px) { .badge { position: static; margin-left: auto; } }
+
+/* Sections open as a sheet over the brain, which keeps glowing through it */
+.sheet {
+  background: linear-gradient(90deg, rgba(7, 8, 24, .93) 0%, rgba(7, 8, 24, .86) 75%, rgba(7, 8, 24, .55) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-right: 1px solid rgba(160, 170, 255, .1);
+}
+@media (max-width: 767px) { .sheet { background: rgba(7, 8, 24, .94); } }
 
 /* Buttons inside panels */
 .action {
@@ -89,6 +121,14 @@ body {
 .note a:hover { text-decoration-color: #5EEAD4; }
 .note input[type="checkbox"] { accent-color: #5EEAD4; margin-right: .4rem; }
 .note .contains-task-list { list-style: none; padding-left: .25rem; }
+
+/* A task's text renders as inline markdown (for links), without paragraph spacing */
+.task-text .note p { margin: 0; display: inline; color: inherit; line-height: 1.55; }
+.task-text .note { font-size: inherit; display: inline; }
+.task-text .note + span { margin-left: .5rem; white-space: nowrap; }
+
+/* Snooze appears on hover (always visible on touch screens) */
+@media (hover: hover) { .task-row .snooze { opacity: 0; transition: opacity .15s; } .task-row:hover .snooze, .task-row .snooze:focus { opacity: 1; } }
 
 /* Briefing: tighter, sections read as a scannable list */
 .briefing .note h2 { font-size: .95rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid rgba(160,170,255,.1); }

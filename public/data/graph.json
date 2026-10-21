@@ -1,6 +1,93 @@
 {
   "nodes": [
     {
+      "id": "Arnav's Brain",
+      "title": "Arnav's Brain",
+      "type": "project",
+      "tags": [
+        "software",
+        "project",
+        "webdev",
+        "ai"
+      ],
+      "body": "# Arnav's Brain\n\n**In one sentence:** My second brain as a 3D map that an AI agent grows every morning.\n\n## What it does\n- Every note in my Obsidian vault is a glowing node; every link is a line. Topics form their own regions.\n- A scheduled Claude agent reads my sources each morning, writes new notes in my words, links them, and republishes the map.\n- Privacy by design: only notes marked public are exported, links to private notes are stripped, and the export refuses to publish if any private text slips through.\n- A private version on my laptop is my daily hub: briefing, sorted email, deadlines, life areas, files and flashcards.\n\n## How it's built\nReact + Vite + Tailwind, Three.js via react-force-graph with a bloom pass, an export script with a leak check, and a local API that runs Claude Code for the private dashboard.\n\n## Related\n- [[Software]]\n- [[Cramr]]",
+      "meta": {
+        "repo": "https://github.com/arnav-616/brain-site",
+        "url": "https://brain-site-three.vercel.app",
+        "stack": [
+          "React",
+          "Three.js",
+          "react-force-graph",
+          "Tailwind",
+          "Claude Code",
+          "Obsidian",
+          "Vercel"
+        ],
+        "status": "active",
+        "summary": "My second brain as a 3D map that an AI agent grows every morning from my email, files and notes."
+      },
+      "created": "2026-10-13",
+      "topic": "software",
+      "degree": 2
+    },
+    {
+      "id": "Cramr",
+      "title": "Cramr",
+      "type": "project",
+      "tags": [
+        "software",
+        "project",
+        "webdev",
+        "ai"
+      ],
+      "body": "# Cramr\n\n**In one sentence:** An academic command center for college students: deadlines, grades, study time and workload in one place.\n\n## What it does\n- **Busy Score**: a 0–100 workload gauge computed from remaining hours, urgency, difficulty and deadline clustering.\n- **Natural-language add**: \"Calc problem set due Friday, 3 hours, hard\" becomes a structured assignment via Gemini.\n- **Study tools**: turn notes, files or a YouTube transcript into summaries, study guides or flashcards.\n- **Grades**: weighted components, a what-you-need-on-the-final calculator, GPA tracking.\n- **Canvas LMS sync**, a Pomodoro study timer with Focus Mode, a semester heatmap, and an AI weekly debrief.\n- Installable PWA.\n\n## How it's built\nReact 19 + Vite + Tailwind on the frontend (Vercel); Node/Express + SQLite + JWT auth on the backend (Fly.io); Docker for local dev.\n\n## Timeline\n- Jul 14–15, 2026: deployed (Vercel + Fly.io), added a landing page, rebranded from StudentHub to Cramr\n- Jul 25, 2026: fixed PDF parsing, expanded the onboarding tour\n\n## Related\n- [[Software]]\n- [[Arnav's Brain]]",
+      "meta": {
+        "repo": "https://github.com/arnav-616/cramr",
+        "url": "https://cramr-app.vercel.app",
+        "image": "https://raw.githubusercontent.com/arnav-616/cramr/main/docs/screenshots/dashboard.png",
+        "stack": [
+          "React 19",
+          "Vite",
+          "Tailwind",
+          "Node/Express",
+          "SQLite",
+          "Gemini API",
+          "Docker",
+          "Fly.io"
+        ],
+        "status": "shipped",
+        "summary": "A full-stack academic command center for college students: deadlines, grades, study time and workload, with AI where it actually saves time."
+      },
+      "created": "2026-07-14",
+      "topic": "software",
+      "degree": 2
+    },
+    {
+      "id": "PixelMuse Weekly Pose League",
+      "title": "PixelMuse Weekly Pose League",
+      "type": "project",
+      "tags": [
+        "software",
+        "project",
+        "webdev",
+        "hackathon"
+      ],
+      "body": "# PixelMuse Weekly Pose League\n\n**In one sentence:** A retention loop for an AI image app: a daily challenge, streaks and a community reel so people keep coming back.\n\n## What it does\n- A daily challenge that changes by day of the week, plus a Pose Coach with posing and camera tips.\n- Generate an image, lock in a daily check-in, and build a streak toward a weekly goal.\n- A Remix Reel of community and personal outputs.\n\n## Context\nBuilt at the NOBE hackathon, April 2026.\n\n## Related\n- [[Software]]",
+      "meta": {
+        "repo": "https://github.com/arnav-616/NOBE-Hackathon-VAAP",
+        "stack": [
+          "React",
+          "Vite",
+          "Node/Express"
+        ],
+        "status": "shipped",
+        "summary": "Hackathon prototype that fixes an AI image app's \"novelty cliff\" with a daily challenge, streaks and a community remix reel."
+      },
+      "created": "2026-04-18",
+      "topic": "software",
+      "degree": 1
+    },
+    {
       "id": "Finance",
       "title": "Finance",
       "type": "area",
@@ -13,6 +100,20 @@
       "created": "2026-10-13",
       "topic": "finance",
       "degree": 9
+    },
+    {
+      "id": "Software",
+      "title": "Software",
+      "type": "area",
+      "tags": [
+        "software",
+        "area"
+      ],
+      "body": "# Software\n\nThings I build.\n\n## Projects\n- [[Cramr]]: academic command center (shipped, live demo)\n- [[Arnav's Brain]]: this 3D second brain\n- [[PixelMuse Weekly Pose League]]: hackathon retention prototype",
+      "meta": {},
+      "created": "2026-10-20",
+      "topic": "software",
+      "degree": 3
     },
     {
       "id": "Beta",
@@ -146,6 +247,22 @@
   ],
   "links": [
     {
+      "source": "Arnav's Brain",
+      "target": "Software"
+    },
+    {
+      "source": "Arnav's Brain",
+      "target": "Cramr"
+    },
+    {
+      "source": "Cramr",
+      "target": "Software"
+    },
+    {
+      "source": "PixelMuse Weekly Pose League",
+      "target": "Software"
+    },
+    {
       "source": "Finance",
       "target": "Beta"
     },
@@ -270,5 +387,117 @@
       "target": "Unsystematic Risk"
     }
   ],
-  "generatedAt": "2026-10-17T21:10:51.470Z"
+  "similar": [
+    {
+      "a": "Arnav's Brain",
+      "b": "Software",
+      "score": 0.13
+    },
+    {
+      "a": "Cramr",
+      "b": "Software",
+      "score": 0.13
+    },
+    {
+      "a": "PixelMuse Weekly Pose League",
+      "b": "Software",
+      "score": 0.27
+    },
+    {
+      "a": "Finance",
+      "b": "CAPM",
+      "score": 0.26
+    },
+    {
+      "a": "Finance",
+      "b": "Security Market Line",
+      "score": 0.25
+    },
+    {
+      "a": "Finance",
+      "b": "Market Risk Premium",
+      "score": 0.17
+    },
+    {
+      "a": "Beta",
+      "b": "Correlation",
+      "score": 0.18
+    },
+    {
+      "a": "Beta",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.15
+    },
+    {
+      "a": "Beta",
+      "b": "Market Risk Premium",
+      "score": 0.15
+    },
+    {
+      "a": "CAPM",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.29
+    },
+    {
+      "a": "CAPM",
+      "b": "Market Risk Premium",
+      "score": 0.27
+    },
+    {
+      "a": "Correlation",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.28
+    },
+    {
+      "a": "Market Risk Premium",
+      "b": "Security Market Line",
+      "score": 0.21
+    },
+    {
+      "a": "Portfolio Beta",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.16
+    },
+    {
+      "a": "Portfolio Beta",
+      "b": "Finance",
+      "score": 0.14
+    },
+    {
+      "a": "Portfolio Beta",
+      "b": "CAPM",
+      "score": 0.13
+    },
+    {
+      "a": "Security Market Line",
+      "b": "CAPM",
+      "score": 0.24
+    },
+    {
+      "a": "Security Market Line",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.23
+    },
+    {
+      "a": "Risk and the Capital Asset Pricing Model",
+      "b": "Systematic Risk",
+      "score": 0.3
+    },
+    {
+      "a": "Systematic Risk",
+      "b": "Unsystematic Risk",
+      "score": 0.24
+    },
+    {
+      "a": "Systematic Risk",
+      "b": "CAPM",
+      "score": 0.17
+    },
+    {
+      "a": "Unsystematic Risk",
+      "b": "Risk and the Capital Asset Pricing Model",
+      "score": 0.28
+    }
+  ],
+  "generatedAt": "2026-10-21T04:26:14.659Z"
 }

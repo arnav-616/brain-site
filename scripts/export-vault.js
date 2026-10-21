@@ -4,7 +4,10 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { vaultPath } from '../lib/config.js'
 import { parseNote, buildGraph, toPublic, findLeaks } from '../lib/vault.js'
+import { unlinkedMentions } from '../lib/life.js'
+import { similarPairs } from '../lib/similar.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const arg = (name, fallback) => {
@@ -13,8 +16,9 @@ const arg = (name, fallback) => {
 }
 const mode = arg('mode', 'public')
 const readJson = (file, fallback) => { try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return fallback } }
-const vault = resolve(arg('vault', process.env.VAULT_PATH || join(root, '../second_project')))
-const SKIP_DIRS = new Set(['Templates', 'Attachments', 'node_modules'])
+const vault = vaultPath()
+// Archived notes stay in the vault but out of the brain.
+const SKIP_DIRS = new Set(['Templates', 'Attachments', 'node_modules', '05-Archive', 'Imports'])
 const SKIP_FILES = new Set(['CLAUDE.md'])
 
 function walk(dir) {
@@ -44,9 +48,20 @@ if (mode === 'private') {
   })
   graph.briefing = briefing ? { created: briefing.created, body: briefing.body, path: briefing.path } : null
   graph.deadlines = readJson(join(vault, '.brain/deadlines.json'), [])
+  graph.email = readJson(join(vault, '.brain/email.json'), null)
+  graph.files = readJson(join(vault, '.brain/files.json'), null)
+  graph.social = readJson(join(vault, '.brain/social.json'), null)
+  graph.state = readJson(join(vault, '.brain/state.json'), {})
+  graph.sources = readJson(join(vault, '.brain/sources.json'), {})
+  for (const name of ['calendar', 'reminders', 'apple-notes', 'applications', 'checkins', 'money', 'cards', 'reviews']) {
+    graph[name.replace(/-(\w)/g, (_, c) => c.toUpperCase())] = readJson(join(vault, `.brain/${name}.json`), null)
+  }
+  graph.suggestions = unlinkedMentions(graph.nodes)
+  graph.similar = similarPairs(graph.nodes.filter(n => !['daily', 'inbox'].includes(n.type)))
   out = join(root, '.private/graph.json')
 } else if (mode === 'public') {
   graph = toPublic(graphNotes)
+  graph.similar = similarPairs(graph.nodes)
   const leaks = findLeaks(graph, notes)
   if (leaks.length) {
     console.error('❌ Refusing to export — private content found in public data:')

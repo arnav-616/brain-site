@@ -1,12 +1,38 @@
 import { useRef, useState } from 'react'
 import Markdown from '../Markdown'
 import { call, runJob } from '../api'
+import { isCheckin } from '../../lib/life.js'
+import { parseActions, describe, gmailDraftUrl } from '../../lib/assist.js'
+
+// Voice input, where the browser supports it (Chrome, Safari).
+const Speech = window.SpeechRecognition || window.webkitSpeechRecognition
 
 // Private dashboard: save a thought/link to the inbox (Enter) or ask the brain a question (⌘Enter).
 export default function CommandBar({ onChanged, onSelect }) {
   const [text, setText] = useState('')
   const [status, setStatus] = useState(null) // {kind: 'saved'|'error'|'asking'|'answer', text, steps}
   const input = useRef()
+  const [listening, setListening] = useState(false)
+  const rec = useRef(null)
+
+  function listen() {
+    if (listening) { rec.current?.stop(); return }
+    const r = new Speech()
+    r.lang = 'en-US'; r.interimResults = true
+    r.onresult = (e) => setText([...e.results].map(x => x[0].transcript).join(''))
+    r.onend = () => { setListening(false); input.current?.focus() }
+    r.onerror = () => setListening(false)
+    rec.current = r; r.start(); setListening(true)
+  }
+
+  async function log() {
+    try {
+      const { logged } = await call('checkin', { text })
+      setText('')
+      setStatus({ kind: 'saved', text: `Logged ${Object.entries(logged).map(([k, v]) => (v === true ? k : `${k} ${v}`)).join(', ')}. See it on the Life page.` })
+      onChanged()
+    } catch (e) { setStatus({ kind: 'error', text: e.message }) }
+  }
 
   async function save() {
     if (!text.trim()) return
@@ -39,11 +65,21 @@ export default function CommandBar({ onChanged, onSelect }) {
         onSubmit={e => { e.preventDefault(); save() }}
         className="glass flex items-center gap-2 rounded-2xl p-1.5 pl-4">
         <input
-          ref={input} value={text} onChange={e => setText(e.target.value)}
+          ref={input} id="capture" value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); ask() } }}
-          placeholder="Capture a thought or link, or ask your brain…"
+          placeholder="Capture a thought or link, or ask your brain…  (N)"
           aria-label="Capture a thought or link, or ask a question"
           className="min-w-0 flex-1 bg-transparent py-1.5 text-[15px] text-ink outline-none placeholder:text-mute" />
+        {Speech && (
+          <button type="button" onClick={listen} aria-label={listening ? 'Stop listening' : 'Speak'} title="Speak"
+            className={`rounded-xl px-2 py-1.5 ${listening ? 'animate-pulse text-[#F472B6]' : 'text-mute hover:text-ink'}`}>
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
+          </button>
+        )}
+        {isCheckin(text) && (
+          <button type="button" onClick={log} title="Log to Health"
+            className="rounded-xl bg-[#A78BFA]/15 px-3 py-1.5 text-sm font-medium text-[#C4B5FD] hover:bg-[#A78BFA]/25">Log</button>
+        )}
         <button type="submit" disabled={!text.trim()} title="Save to inbox (Enter)"
           className="rounded-xl px-3 py-1.5 text-sm text-ink/90 hover:bg-white/10 disabled:opacity-40">Save</button>
         <button type="button" onClick={ask} disabled={!text.trim() || status?.kind === 'asking'} title="Ask your brain (⌘Enter)"
@@ -62,7 +98,7 @@ export default function CommandBar({ onChanged, onSelect }) {
                   {status.kind === 'asking' && (
                     <p className="mt-2 text-mute animate-pulse">{status.steps.at(-1) ?? 'Thinking'}…</p>
                   )}
-                  {status.text && <div className="mt-2"><Markdown body={status.text} onSelect={onSelect} /></div>}
+                  {status.text && <Answer reply={status.text} done={status.kind === 'answer'} onSelect={onSelect} onApplied={onChanged} />}
                 </>
               )}
             </div>
@@ -70,6 +106,46 @@ export default function CommandBar({ onChanged, onSelect }) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// The assistant's answer, plus any changes it proposes. Nothing changes until you press Apply.
+function Answer({ reply, done, onSelect, onApplied }) {
+  const { answer, actions, rejected } = parseActions(reply)
+  const [picked, setPicked] = useState(() => actions.map(() => true))
+  const [result, setResult] = useState(null)
+  async function apply() {
+    const chosen = actions.filter((_, i) => picked[i])
+    chosen.filter(a => a.type === 'draft_email').forEach(a => window.open(gmailDraftUrl(a), '_blank'))
+    try {
+      const { applied } = await call('applyActions', { actions: chosen.filter(a => a.type !== 'draft_email') })
+      setResult({ ok: `Done: ${applied + chosen.filter(a => a.type === 'draft_email').length} change${chosen.length === 1 ? '' : 's'}. Undo is in Settings.` })
+      onApplied()
+    } catch (e) { setResult({ error: e.message }) }
+  }
+  return (
+    <div className="mt-2">
+      <Markdown body={answer} onSelect={onSelect} />
+      {done && actions.length > 0 && !result?.ok && (
+        <div className="mt-3 rounded-xl border border-[#5EEAD4]/25 bg-[#5EEAD4]/[0.05] p-3">
+          <p className="mb-2 text-sm font-medium text-ink">Proposed changes</p>
+          <ul className="space-y-1.5">
+            {actions.map((a, i) => (
+              <li key={i}>
+                <label className="flex items-start gap-2 text-sm text-ink/90">
+                  <input type="checkbox" checked={picked[i]} onChange={e => setPicked(p => p.map((v, j) => (j === i ? e.target.checked : v)))} className="mt-1 accent-[#5EEAD4]" />
+                  {describe(a)}
+                </label>
+              </li>
+            ))}
+          </ul>
+          {rejected.length > 0 && <p className="mt-2 text-xs text-mute">Skipped: {rejected.join('; ')}</p>}
+          <button onClick={apply} disabled={!picked.some(Boolean)} className="action mt-3">Apply</button>
+        </div>
+      )}
+      {result?.ok && <p className="mt-3 text-sm text-[#5EEAD4]">{result.ok}</p>}
+      {result?.error && <p className="mt-3 text-sm text-[#F472B6]">{result.error}</p>}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { captureNote, uniqueName, toggleTask, setVisibility } from '../lib/actions.js'
+import { captureNote, uniqueName, toggleTask, setVisibility, areaNote, setTaskDue } from '../lib/actions.js'
 import { parseNote } from '../lib/vault.js'
 
 describe('captureNote', () => {
@@ -56,5 +56,24 @@ describe('setVisibility', () => {
   })
   it('rejects anything else', () => {
     expect(() => setVisibility('x', 'everyone')).toThrow()
+  })
+})
+
+describe('areaNote', () => {
+  it('makes a private area page with a matching tag', () => {
+    const { title, content } = areaNote('Health', '2026-10-20')
+    const n = parseNote(`03-Areas/${title}.md`, content)
+    expect([n.type, n.visibility, n.tags[0]]).toEqual(['area', 'private', 'health'])
+  })
+  it('strips path characters', () => {
+    expect(areaNote('../Money', 'x').title).toBe('Money')
+  })
+})
+
+describe('setTaskDue', () => {
+  it('replaces an existing date or adds one, on the right task only', () => {
+    const raw = '- [ ] a 📅 2026-10-13\n- [ ] b'
+    expect(setTaskDue(raw, 0, '2026-10-21')).toBe('- [ ] a 📅 2026-10-21\n- [ ] b')
+    expect(setTaskDue(raw, 1, '2026-10-21')).toBe('- [ ] a 📅 2026-10-13\n- [ ] b 📅 2026-10-21')
   })
 })

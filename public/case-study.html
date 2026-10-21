@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How I built my brain · Arnav's Brain</title>
+<meta name="description" content="A second brain that an AI agent grows every morning: how it works, how privacy is guaranteed, and what I learned." />
+<meta property="og:title" content="How I built my brain" />
+<meta property="og:image" content="https://brain-site-three.vercel.app/og.png" />
+<link rel="icon" type="image/svg+xml" href="/brain.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root { --bg: #070818; --ink: #E6E9FF; --mute: #8A90B8; --body: #C9CDF0; --cyan: #5EEAD4; --violet: #A78BFA; --amber: #FBBF24; --line: rgba(160,170,255,.16); --card: rgba(16,18,46,.6); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(1100px 600px at 90% -10%, rgba(167,139,250,.14), transparent 60%), var(--bg); color: var(--body); font: 17px/1.7 Manrope, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  main { max-width: 760px; margin: 0 auto; padding: 72px 16px 96px; }
+  a { color: var(--cyan); text-underline-offset: 3px; }
+  h1 { font: 600 clamp(2rem, 5vw, 3rem)/1.1 Unbounded, sans-serif; color: var(--ink); margin: 0 0 20px; }
+  h2 { font: 600 1.25rem/1.3 Manrope, sans-serif; color: var(--ink); margin: 56px 0 12px; }
+  p { margin: 0 0 16px; max-width: 68ch; }
+  strong { color: var(--ink); }
+  .lede { font-size: 1.15rem; color: var(--ink); opacity: .9; }
+  .cta { display: inline-flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 0; }
+  .cta a { padding: 10px 16px; border-radius: 12px; background: rgba(94,234,212,.12); text-decoration: none; font-weight: 600; }
+  .cta a.quiet { background: rgba(255,255,255,.06); color: var(--ink); }
+  figure { margin: 28px 0; padding: 20px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }
+  figcaption { color: var(--mute); font-size: .9rem; margin-top: 10px; }
+  svg text { font-family: Manrope, system-ui, sans-serif; }
+  ul { padding-left: 1.2rem; } li { margin: 6px 0; } li::marker { color: #5c628f; }
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+  .stack li { margin: 0; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,.06); font-size: .9rem; color: var(--ink); }
+  footer { margin-top: 64px; color: var(--mute); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <p style="color:var(--mute);margin-bottom:8px"><a href="/" style="text-decoration:none">← Back to the brain</a></p>
+  <h1>A second brain that grows itself</h1>
+  <p class="lede">I wanted one place that remembers everything I learn and build, and tells me each morning what
+    needs me. So I built a knowledge graph that an AI agent maintains every day, and a 3D map anyone can explore.</p>
+  <div class="cta"><a href="/">Explore the brain</a><a class="quiet" href="https://github.com/arnav-616/brain-site">Read the code</a></div>
+
+  <h2>What it does</h2>
+  <p>Every note in my Obsidian vault is a node; every link between notes is an edge. Each morning a Claude agent
+    reads my email, class files, GitHub repos and saved links, writes new notes in my own words, links them to what
+    I already know, and writes a briefing: what needs me today, deadlines, the news I care about, and what my brain
+    learned overnight. Then it republishes the public map.</p>
+  <p>On my laptop, the same brain is the center of a private app: sorted email, the people waiting on me, an
+    internship tracker, health check-ins, a life timeline, spaced-repetition review, and a command bar where I can
+    capture a thought, ask a question, or ask it to do something (I approve every change).</p>
+
+  <h2>How it's built</h2>
+  <figure>
+    <svg viewBox="0 0 720 300" width="100%" role="img" aria-label="Sources flow into a Claude agent, which writes the vault; an export with a leak check produces the public site and the private app.">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8A90B8"/></marker></defs>
+      <g fill="none" stroke="rgba(160,170,255,.35)" stroke-width="1.2">
+        <rect x="10" y="40" width="150" height="220" rx="14"/>
+        <rect x="200" y="110" width="140" height="80" rx="14" stroke="#A78BFA"/>
+        <rect x="380" y="110" width="130" height="80" rx="14"/>
+        <rect x="550" y="40" width="160" height="90" rx="14" stroke="#5EEAD4"/>
+        <rect x="550" y="170" width="160" height="90" rx="14"/>
+      </g>
+      <g stroke="#8A90B8" stroke-width="1.4" marker-end="url(#a)">
+        <line x1="160" y1="150" x2="198" y2="150"/><line x1="340" y1="150" x2="378" y2="150"/>
+        <line x1="510" y1="135" x2="548" y2="90"/><line x1="510" y1="165" x2="548" y2="212"/>
+      </g>
+      <g fill="#E6E9FF" font-size="14" font-weight="600">
+        <text x="28" y="68">Sources</text><text x="218" y="140">Claude agent</text><text x="398" y="140">Obsidian vault</text>
+        <text x="568" y="68">Public site</text><text x="568" y="198">Private app</text>
+      </g>
+      <g fill="#8A90B8" font-size="12.5">
+        <text x="28" y="96">Gmail</text><text x="28" y="118">Google Drive</text><text x="28" y="140">GitHub</text><text x="28" y="162">Saved links</text>
+        <text x="28" y="184">Mac Calendar &amp; Notes</text><text x="28" y="206">Folders</text><text x="28" y="228">App data exports</text>
+        <text x="218" y="162">/ingest, every</text><text x="218" y="178">morning</text>
+        <text x="398" y="162">Markdown + git</text><text x="398" y="178">full undo history</text>
+        <text x="568" y="92">public notes only,</text><text x="568" y="110">after a leak check</text>
+        <text x="568" y="222">everything, on my</text><text x="568" y="240">laptop or phone</text>
+      </g>
+    </svg>
+    <figcaption>One pipeline, two outputs: what's public is decided per note, and checked before anything ships.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Ingest:</strong> a scheduled Claude Code agent follows a written routine (a slash command in the vault),
+      with each source handled independently so one failure never stops the run.</li>
+    <li><strong>Export:</strong> a Node script parses the vault into a graph, computes topics, link suggestions and
+      meaning-based similarity (TF-IDF, no AI cost), and generates a preview image for every public note.</li>
+    <li><strong>Map:</strong> React and three.js with a bloom pass, a custom force that gives each topic its own region,
+      and a camera that glides aside so panels never cover the brain.</li>
+    <li><strong>Private app:</strong> a local API inside the dev server runs Claude Code jobs, streams their progress,
+      and applies changes as git commits. Phones get in only with a secret key.</li>
+  </ul>
+
+  <h2>Privacy by design</h2>
+  <p>My vault holds email summaries, school notes, and things I'd never publish, so the default is private.
+    A note is public only if it says <code>visibility: public</code>. Links to anything else are stripped, and the
+    export <strong>refuses to publish</strong> if any private title or line of text appears in the public data. CI
+    checks it again on every push. The assistant can read but not write; email is drafted, never sent.</p>
+
+  <h2>Tech</h2>
+  <ul class="stack">
+    <li>React 19</li><li>Vite</li><li>Tailwind</li><li>three.js</li><li>react-force-graph-3d</li><li>Node.js</li>
+    <li>Claude Code</li><li>Claude API</li><li>Obsidian</li><li>Vitest</li><li>GitHub Actions</li><li>Vercel</li>
+  </ul>
+
+  <h2>What I learned</h2>
+  <ul>
+    <li>Automation is only useful if you can trust it: undo, leak checks and approval steps mattered more than features.</li>
+    <li>Writing the agent's routine as plain instructions, then tightening them when it drifted (like dates written in
+      words), works better than hard-coding every step.</li>
+    <li>Design for the moment of use: the home view changes between morning and evening because what I need does.</li>
+  </ul>
+
+  <footer>Arnav Pillay · <a href="/">Explore the brain</a> · <a href="https://github.com/arnav-616/brain-site">Source</a></footer>
+</main>
+</body>
+</html>
